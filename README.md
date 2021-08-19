@@ -113,7 +113,7 @@ A variável `response` tem vários atributos, como o `text`, que traz o HTML da 
 
 Então, você pode uma forma de fazer um famoso "Hello, world!" no projeto Querido Diário seria com um código mais ou menos como este abaixo. Você encontra o código abaixo no arquivo (sp_paulinia.py)[sp_paulina.py], presente neste repositório.
 
---- IMAGEM ----
+![image](https://user-images.githubusercontent.com/3240562/130146622-5c5a406a-14c3-4867-a292-3e00fd5961b4.png)
 
 
 https://gist.github.com/belisards/258bfbf83771d183be7649981772ccc0

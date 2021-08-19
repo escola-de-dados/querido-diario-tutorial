@@ -17,7 +17,7 @@ Para acompanhar o tutorial e construir um raspador, é necessário algum conheci
 - Git e Github
 - HTML,CSS, XPath
 
-![image](https://user-images.githubusercontent.com/3240562/130143298-9a9e6d48-3b22-4dfa-b87f-3e2cb155d41f.png)
+![image](https://user-images.githubusercontent.com/3240562/130143467-f88efa8e-8ac0-446a-b805-d0bec5ba9d7d.png)
 
 ### Pareceu grego?
 

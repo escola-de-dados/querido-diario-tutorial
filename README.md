@@ -4,7 +4,7 @@ O [Querido Diário](https://queridodiario.ok.org.br/) é um projeto de código a
 
 Neste tutorial, mostraremos algumas orientações gerais para construir um raspador e contribuir com o projeto Querido Diário. 
 
-## Colabore com o tutorial
+## 💪 Colabore com o tutorial
 
 Este é repositório ainda está em fase de elaboração. Abaixo, estão algumas tarefas ainda pendentes. Você pode ajudar melhorando a documentação por meio de *pull requests* neste repositório. Confira a lista de tarefas pendentes no final do documento.
 

@@ -202,4 +202,4 @@ Se tiver dúvidas sobre algo, abra uma **issue** neste repositório.
 - [ ] Melhorar a seção "Construindo um raspador de verdade".
 - [ ] Melhorar dicas para debugar o código.
 - [ ] Revisar e incorporar conteúdos faltantes (e ainda atuais) citados no artigo do [Vanz](http://jvanz.com/como-funciona-o-robozinho-do-serenata-que-baixa-os-diarios-oficiais.html).
-- [ ] Revisar e incorporar conteúdos faltantes (e ainda atuais) citados no [post](https://www.anapaulagomes.me/pt-br/2020/10/).quero-tornar-di%C3%A1rios-oficiais-acess%C3%ADveis.-como-come%C3%A7ar/) e na apresentação no [Coda.Br 2020](https://escoladedados.org/coda2020/workshop-querido-diario/) feito por Ana Paula Gomes.
+- [ ] Revisar e incorporar conteúdos faltantes (e ainda atuais) citados no [post](https://www.anapaulagomes.me/pt-br/2020/10/quero-tornar-di%C3%A1rios-oficiais-acess%C3%ADveis.-como-come%C3%A7ar/) e na apresentação no [Coda.Br 2020](https://escoladedados.org/coda2020/workshop-querido-diario/) feito por Ana Paula Gomes.

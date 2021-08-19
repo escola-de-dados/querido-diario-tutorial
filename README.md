@@ -75,6 +75,8 @@ Por padrão, todos os raspadores começam importando alguns pacotes. Vejamos qua
 
 `from gazette.spiders.base import BaseGazetteSpider`: é o raspador (spider) base do projeto, que já traz várias funcionalidades úteis.
 
+### Parâmetros inicias
+
 Cada raspador traz uma classe em Python, que executa determinadas rotinas para cada URL de Diários Oficiais. Todas as classes possuem pelo menos as informações básicas abaixo.
 
 Vejamos um exemplo a partir da cidade Paulínia em São Paulo.
@@ -88,6 +90,8 @@ Vejamos um exemplo a partir da cidade Paulínia em São Paulo.
 `start_urls` = URL de início da navegação do raspador. A resposta dessa requisição inicial é encaminhada para a variável response, do método padrão do Scrapy chamado parse. Veremos mais sobre isso em breve. Exemplo:`["http://www.paulinia.sp.gov.br/semanarios/"]`
 
 `start_date` = Representação de data no formato ano, mês e dia (YYYY, M, D), usando o pacote datetime. É a data inicial da publicação do Diário Oficial no sistema questão, ou seja, a data da primeira publicação disponível online. Encontre esta data pesquisando e inserindo essa data manualmente nesta variável. Exemplo: `datetime.date(2017, 4, 3)`.
+
+### Parâmetros de saída
 
 Além disso, cada raspador também precisa retornar algumas informações por padrão. Isso acontece usando a função `yield`.
 
@@ -103,32 +107,13 @@ Além disso, cada raspador também precisa retornar algumas informações por pa
 
 # Hello world: faça sua primeira requisição
 
-O Scrapy começa fazendo uma requisição para a URL definida no parâmetro start_urls. A resposta dessa requisição vai para o método padrão parse, que irá armazenar a resposta da requisição na variável response.
+O Scrapy começa fazendo uma requisição para a URL definida no parâmetro `start_urls`. A resposta dessa requisição vai para o método padrão `parse`, que irá armazenar a resposta da requisição na variável `response`.
 
-A variável response tem vários atributos, como o text, que traz o HTML da página em questão como uma string.
+A variável `response` tem vários atributos, como o `text`, que traz o HTML da página em questão como uma *string*.
 
-Então, você pode começar sua primeira requisição com Scrapy com algum código parecido com este.
+Então, você pode uma forma de fazer um famoso "Hello, world!" no projeto Querido Diário seria com um código mais ou menos como este abaixo. Você encontra o código abaixo no arquivo (sp_paulinia.py)[sp_paulina.py], presente neste repositório.
 
-
-```
-import datetime
-import scrapy
-from gazette.spiders.base import BaseGazetteSpider
-
-class SpPauliniaSpider(BaseGazetteSpider):
-    name = "sp_paulinia"
-    TERRITORY_ID = "2905206"
-    start_date = datetime.date(2010, 1, 4)
-    allowed_domains = ["www.paulinia.sp.gov.br/"]
-    start_urls = ["http://www.paulinia.sp.gov.br/semanarios/"]
-
-    def parse(self, response):
-        yield {
-            “date”: datetime.date.today(),
-            “file_urls”: [response.url],
-        }
-```
-
+--- IMAGEM ----
 
 
 https://gist.github.com/belisards/258bfbf83771d183be7649981772ccc0

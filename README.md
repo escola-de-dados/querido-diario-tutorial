@@ -126,9 +126,11 @@ Para testar um raspador e começar a desenvolver o seu, siga as seguintes etapas
 3. Ative o ambiente virtual, caso não tenha feito antes. Rode `source .venv/bin/activate` ou o comando adequado na pasta onde o ambiente foi criado.
 4. No terminal, rode o raspador com o comando `scrapy crawl nomedoraspador`. Ou seja, no exemplo rodamos: `scrapy crawl sp_paulinia`.
 
-# Dissecando o arquivo log
+# 💥 Dissecando o arquivo log
 
+**Bum!!** Deve aparecer um arquivo de log enorme terminal. 
 
+A parte que nos interessa começa apenas após a linha **[scrapy.core.engine] INFO: Spider opened**.
 
 como ler o log?
 ver a partir do INFO: Spider opened

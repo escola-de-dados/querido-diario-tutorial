@@ -65,7 +65,29 @@ Se você navegou pelos raspadores, talvez tenha reparado que alguns códigos pos
 
 Mas não se preocupe com isso, por ora. Vamos voltar ao nosso exemplo e ver como construir um raspador completo individualmente.
 
+## Anatomia de um raspador
 
+Por padrão, todos os raspadores começam importando alguns pacotes. Vejamos quais são.
 
+`import datetime`: pacote para lidar com datas.
 
+`import scrapy`: quem faz quase toda mágica acontecer. É o pacote utilizado para construir nossos raspadores.
+
+`from gazette.spiders.base import BaseGazetteSpider`: é o raspador (spider) base do projeto, que já traz várias funcionalidades úteis.
+
+Cada raspador traz uma classe em Python, que executa determinadas rotinas para cada URL de Diários Oficiais. Todas as classes possuem pelo menos as informações básicas abaixo.
+
+Vejamos um exemplo a partir da cidade Paulínia em São Paulo.
+
+`name` = Nome do raspador no mesmo padrão do nome do arquivo, sem a extensão. Exemplo: `sp_paulinia`.
+
+`TERRITORY_ID` = código da cidade no IBGE. Confira esta tabela da Wikipedia para descobrir o código da sua cidade. Exemplo: `2905206`.
+
+`allowed_domains` = Domínios nos quais o raspador irá atuar. Exemplo: `["www.paulinia.sp.gov.br/"]`
+
+`start_urls` = URL de início da navegação do raspador. A resposta dessa requisição inicial é encaminhada para a variável response, do método padrão do Scrapy chamado parse. Veremos mais sobre isso em breve. Exemplo:`["http://www.paulinia.sp.gov.br/semanarios/"]`
+
+`start_date` = Representação de data no formato ano, mês e dia (YYYY, M, D), usando o pacote datetime. É a data inicial da publicação do Diário Oficial no sistema questão, ou seja, a data da primeira publicação disponível online. Encontre esta data pesquisando e inserindo essa data manualmente nesta variável. Exemplo: `datetime.date(2017, 4, 3)`.
+
+Além disso, cada raspador também precisa retornar algumas informações por padrão. Isso acontece usando a função `yield`.
 

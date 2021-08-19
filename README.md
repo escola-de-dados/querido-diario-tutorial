@@ -17,8 +17,6 @@ Para acompanhar o tutorial e construir um raspador, é necessário algum conheci
 - Git e Github
 - HTML,CSS, XPath
 
-![image](https://c.tenor.com/tqERWt8lBYEAAAAM/calculating-puzzled.gif)
-
 ### Pareceu grego?
 
 Se você não se sente confortável com estas tecnologias, sugerimos a leitura dos seguintes tutoriais primeiro.
@@ -45,4 +43,29 @@ pre-commit install
 ```
 
 Usuários de Windows devem executar os mesmo comandos, apenas trocando o segundo deles por:  `.venv\Scripts\activate.bat`
+
+
+## Conhecendo os raspadores
+
+Todos os raspadores do projeto ficam na pasta [data_collection/gazette/spiders/](https://github.com/okfn-brasil/querido-diario/tree/main/data_collection/gazette/spiders). Navegue por diferentes arquivos e repare no que há de comum e diferente no código de cada um.
+
+Os nomes de todos os arquivos seguem o padrão: **uf_nomedacidade.py**. 
+
+Ou seja, primeiro, temos a sigla da UF, seguido de underline e nome da cidade. Tudo em minúsculas, sem espaços, acentos ou caracteres especiais.
+
+Veja alguns exemplos paradigmáticos de Diários Oficiais:
+
+* **Paginação**: um bom exemplo de raspador de DO onde as publicações estão separadas em várias páginas é o [script da cidade de Manaus](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/am_manaus.py).
+
+* **Busca de datas**: outra situação comum é quando você precisa preencher um formulário e fazer uma busca de datas para acessar as publicações. É caso por exemplo do script [ba_salvador.py](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/ba_salvador.py), que raspa as informações da capital baiana.
+
+* **Consulta via APIs**: pode ser também que os dados sobre as publicações estejam disponíveis via API, já organizados em um arquivo JSON. É o caso do raspador de [Natal](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/rn_natal.py).
+
+Se você navegou pelos raspadores, talvez tenha reparado que alguns códigos possuem apenas os metadados. Neste caso, tratam-se de municípios que compartilham o mesmo sistema de publicação. Então, tratamos eles conjuntamente, como associações de municípios, ao invés de repetir o mesmo raspador em cada arquivo.
+
+Mas não se preocupe com isso, por ora. Vamos voltar ao nosso exemplo e ver como construir um raspador completo individualmente.
+
+
+
+
 

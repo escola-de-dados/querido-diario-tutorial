@@ -1,10 +1,10 @@
-# Raspe um Diário Oficial e contribua com o Querido Diário
+# 🕷️📚 Raspe um Diário Oficial e contribua com o Querido Diário
 
 O [Querido Diário](https://queridodiario.ok.org.br/) é um projeto de código aberto da [Open Knowledge Brasil](https://ok.org.br/) que utiliza Python e outras tecnologias para libertar informações do Diário Oficial (DO) das administrações públicas no Brasil. A iniciativa mapeia, baixa e converte todas as páginas das publicações para um formato mais acessível, a fim de facilitar a análise de dados.
 
 Neste tutorial, mostraremos algumas orientações gerais para construir um raspador e contribuir com o projeto Querido Diário. 
 
-## Mapeando os Diários Oficiais
+## 🔎 Mapeando os Diários Oficiais
 Existem formas de colaborar com o Querido Diário sem precisar programar. Você pode participar de nosso Censo, por exemplo, e ajudar a mapear os Diários Oficiais de todos os municípios brasileiros.
 
 Se você quiser botar a mão na massa e construir seu raspador, pode começar “adotando” uma cidade. Primeiro, encontre uma cidade que ainda não esteja listado no [arquivo CITIES.md do repositório](https://github.com/okfn-brasil/querido-diario/blob/main/CITIES.md). 
@@ -13,20 +13,22 @@ O endereço do repositório do projeto é: https://github.com/okfn-brasil/querid
 
 Para acompanhar o tutorial e construir um raspador, é necessário algum conhecimento sobre:
 
+- Uso do terminal
 - Python e o pacote Scrapy
 - Git e Github
 - HTML,CSS, XPath
+
 
 ### Pareceu grego?
 
 Se você não se sente confortável com estas tecnologias, sugerimos a leitura dos seguintes tutoriais primeiro.
 
-* [Tutorial da documentação do Scrapy](https://docs.scrapy.org/en/latest/intro/tutorial.html)
+- [Tutorial da documentação do Scrapy](https://docs.scrapy.org/en/latest/intro/tutorial.html)
 
-* [Introdução a XPath para raspagem de dados](https://escoladedados.org/tutoriais/xpath-para-raspagem-de-dados-em-html/)
+- [Introdução a XPath para raspagem de dados](https://escoladedados.org/tutoriais/xpath-para-raspagem-de-dados-em-html/)
 
 
-## Configurando um ambiente de desenvolvimento
+## 🌱 Configurando um ambiente de desenvolvimento
 Faça um fork do repositório oficial do Querido Diário na sua conta no Github.
 
 Em seguida, clone este novo repositório para seu computador.
@@ -45,7 +47,7 @@ pre-commit install
 Usuários de Windows devem executar os mesmo comandos, apenas trocando o segundo deles por:  `.venv\Scripts\activate.bat`
 
 
-## Conhecendo os raspadores
+## 🕷 Conhecendo os raspadores
 
 Todos os raspadores do projeto ficam na pasta [data_collection/gazette/spiders/](https://github.com/okfn-brasil/querido-diario/tree/main/data_collection/gazette/spiders). Navegue por diferentes arquivos e repare no que há de comum e diferente no código de cada um.
 
@@ -65,7 +67,11 @@ Se você navegou pelos raspadores, talvez tenha reparado que alguns códigos pos
 
 Mas não se preocupe com isso, por ora. Vamos voltar ao nosso exemplo e ver como construir um raspador completo individualmente.
 
-## Anatomia de um raspador
+## 🧠 Anatomia de um raspador
+
+![image](https://user-images.githubusercontent.com/3240562/130146622-5c5a406a-14c3-4867-a292-3e00fd5961b4.png)
+
+<!-- Imagem gerada no site carbon.now.sh -->
 
 Por padrão, todos os raspadores começam importando alguns pacotes. Vejamos quais são.
 
@@ -105,25 +111,31 @@ Além disso, cada raspador também precisa retornar algumas informações por pa
 
 `edition_number` = Número da edição do DO em questão.
 
-# Hello world: faça sua primeira requisição
+# 👋 Hello world: faça sua primeira requisição
 
-O Scrapy começa fazendo uma requisição para a URL definida no parâmetro `start_urls`. A resposta dessa requisição vai para o método padrão `parse`, que irá armazenar a resposta da requisição na variável `response`.
+O Scrapy começa fazendo uma requisição para a URL definida no parâmetro `start_urls`. A resposta dessa requisição vai para o método padrão `parse`, que irá armazenar a resposta na variável `response`.
 
 A variável `response` tem vários atributos, como o `text`, que traz o HTML da página em questão como uma *string*.
 
-Então, você pode uma forma de fazer um famoso "Hello, world!" no projeto Querido Diário seria com um código mais ou menos como este abaixo. Você encontra o código abaixo no arquivo (sp_paulinia.py)[sp_paulina.py], presente neste repositório.
+Então, você pode uma forma de fazer um famoso "Hello, world!" no projeto Querido Diário seria com um código mais ou menos como este abaixo. Você encontra o código abaixo no arquivo [sp_paulinia.py](sp_paulina.py), presente neste repositório.
 
-![image](https://user-images.githubusercontent.com/3240562/130146622-5c5a406a-14c3-4867-a292-3e00fd5961b4.png)
+Para testar um raspador e começar a desenvolver o seu, siga as seguintes etapas:
+
+1. Importe o arquivo para a pasta `data_collection/gazette/spiders/` no repositório criado no seu computador.
+2. Abra o terminal nesta pasta.
+3. Ative o ambiente virtual, caso não tenha feito antes. Rode `source .venv/bin/activate` ou o comando adequado na pasta onde o ambiente foi criado.
+4. No terminal, rode o raspador com o comando `scrapy crawl nomedoraspador`. Ou seja, no exemplo rodamos: `scrapy crawl sp_paulinia`.
+
+# Dissecando o arquivo log
 
 
-https://gist.github.com/belisards/258bfbf83771d183be7649981772ccc0
 
 como ler o log?
 ver a partir do INFO: Spider opened
 buscar principalmente por WARNING e ERROR
 
 
-# Construindo um raspador
+# 🛠️ Construindo um raspador
 
 Aqui, tudo vai depender da forma como cada site é construído. Mas separamos algumas dicas gerais que podem te ajudar.
 

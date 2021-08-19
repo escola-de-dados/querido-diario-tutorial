@@ -4,6 +4,12 @@ O [Querido Diário](https://queridodiario.ok.org.br/) é um projeto de código a
 
 Neste tutorial, mostraremos algumas orientações gerais para construir um raspador e contribuir com o projeto Querido Diário. 
 
+## Colabore com o tutorial
+
+Este é repositório ainda está em fase de elaboração. Abaixo, estão algumas tarefas ainda pendentes. Você pode ajudar melhorando a documentação por meio de *pull requests* neste repositório. Confira a lista de tarefas pendentes no final do documento.
+
+Se você prefere uma apresentação sobre o projeto em vídeo, confira o workshop [Querido Diário: hoje eu tornei um Diário Oficial acessível](https://escoladedados.org/coda2020/workshop-querido-diario/) da Ana Paula Gomes no Coda.Br 2020.
+
 ## 🔎 Mapeando os Diários Oficiais
 Existem formas de colaborar com o Querido Diário sem precisar programar. Você pode participar de nosso Censo, por exemplo, e ajudar a mapear os Diários Oficiais de todos os municípios brasileiros.
 
@@ -17,7 +23,6 @@ Para acompanhar o tutorial e construir um raspador, é necessário algum conheci
 - Python e o pacote Scrapy
 - Git e Github
 - HTML,CSS, XPath
-
 
 ### Pareceu grego?
 
@@ -69,7 +74,7 @@ Mas não se preocupe com isso, por ora. Vamos voltar ao nosso exemplo e ver como
 
 ## 🧠 Anatomia de um raspador
 
-![image](https://user-images.githubusercontent.com/3240562/130146622-5c5a406a-14c3-4867-a292-3e00fd5961b4.png)
+![Script básico, com exemplo de Paulínia](img/sp_paulinia.png)
 
 <!-- Imagem gerada no site carbon.now.sh -->
 
@@ -101,7 +106,7 @@ Vejamos um exemplo a partir da cidade Paulínia em São Paulo.
 
 Além disso, cada raspador também precisa retornar algumas informações por padrão. Isso acontece usando a função `yield`.
 
-`date` = A data da publicação em questão.
+`date` = A data da publicação em questão. Em nosso código de exemplo, definimos este parâmetro como o dia de hoje, apenas para ter uma versão básica operacional do código. Porém, ao construir um raspador real, neste parâmetro você deverá indicar as datas corretas das publicações.
 
 `file_urls` = Retorna a URL das publicações do DO. 
 
@@ -111,13 +116,15 @@ Além disso, cada raspador também precisa retornar algumas informações por pa
 
 `edition_number` = Número da edição do DO em questão.
 
+Vejamos novamente nosso código de exemplo.
+
 # 👋 Hello world: faça sua primeira requisição
 
 O Scrapy começa fazendo uma requisição para a URL definida no parâmetro `start_urls`. A resposta dessa requisição vai para o método padrão `parse`, que irá armazenar a resposta na variável `response`.
 
 A variável `response` tem vários atributos, como o `text`, que traz o HTML da página em questão como uma *string*.
 
-Então, você pode uma forma de fazer um famoso "Hello, world!" no projeto Querido Diário seria com um código mais ou menos como este abaixo. Você encontra o código abaixo no arquivo [sp_paulinia.py](sp_paulina.py), presente neste repositório.
+Então, você pode uma forma de fazer um famoso "Hello, world!" no projeto Querido Diário seria com um código mais ou menos como este abaixo. Você encontra o código visto acima no arquivo [sp_paulinia.py](sp_paulina.py), presente neste repositório. Este código não baixa nenhum DO de fato, mas dá as bases para você entender como os raspadores operam e por onde começar a desenvolver o seu próprio.
 
 Para testar um raspador e começar a desenvolver o seu, siga as seguintes etapas:
 
@@ -126,18 +133,41 @@ Para testar um raspador e começar a desenvolver o seu, siga as seguintes etapas
 3. Ative o ambiente virtual, caso não tenha feito antes. Rode `source .venv/bin/activate` ou o comando adequado na pasta onde o ambiente foi criado.
 4. No terminal, rode o raspador com o comando `scrapy crawl nomedoraspador`. Ou seja, no exemplo rodamos: `scrapy crawl sp_paulinia`.
 
-# 💥 Dissecando o arquivo log
+# 📄 Dissecando o arquivo log
 
-**Bum!!** Deve aparecer um arquivo de log enorme terminal. 
+Se tudo deu certo, deve aparecer um arquivo de log enorme terminal. 
 
-A parte que nos interessa começa apenas após a linha **[scrapy.core.engine] INFO: Spider opened**.
+Ele começa com **[scrapy.utils.log] INFO: Scrapy 2.4.1 started (bot: gazette)** e traz uma série de informações sobre o ambiente inicialmente. Mas a parte que mais nos interessa começa apenas após a linha **[scrapy.core.engine] INFO: Spider opened** e termina na linha **[scrapy.core.engine] INFO: Closing spider (finished)**. Vejamos abaixo.
 
-como ler o log?
-ver a partir do INFO: Spider opened
-buscar principalmente por WARNING e ERROR
+![](img/output1.png)
 
+A linha `DEBUG: Scraped from <200 http://www.paulinia.sp.gov.br/semanarios/>` nos indica conseguimos acessar o endereço especificado (código 200).
 
-# 🛠️ Construindo um raspador
+Ao desenvolvedor um raspador, busque principalmente por avisos de *WARNING* e *ERROR*. São eles que trarão as informações mais importantes para você entender os problemas que ocorrem.
+
+Depois de encerrado o raspador, temos a linha a seção do *MONITORS*, que trará um relatório de execução. É normal que apareçam erros, como este abaixo.
+
+```
+======================================================================
+FAIL: Comparison Between Executions/Days without gazettes
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/abitporu/querido-diario/data_collection/gazette/monitors.py", line 66, in test_days_without_gazettes
+    self.assertNotEqual(
+**AssertionError: 0 == 0 : No gazettes scraped in the last 5 days.**
+
+2021-08-19 18:44:04 [sp_paulinia] INFO: [Spidermon] 5 monitors in 0.022s
+2021-08-19 18:44:04 [sp_paulinia] INFO: [Spidermon] FAILED (failures=1)
+2021-08-19 18:44:04 [sp_paulinia] INFO: [Spidermon] -------------------------- FINISHED ACTIONS --------------------------
+2021-08-19 18:44:04 [spidermon.contrib.actions.telegram] INFO: *sp_paulinia* finished
+- Finish time: *2021-08-19 21:44:04.450166*
+- Gazettes scraped: *1*
+- 🔥 1 failures 🔥
+```
+
+Basicamente, estamos sendo avisados que nada foi raspado nos últimos dias. Tudo bem, este é apenas um teste inicial para irmos nos familiarizando com o projeto.
+
+# 🛠️ Construindo um raspador de verdade
 
 Aqui, tudo vai depender da forma como cada site é construído. Mas separamos algumas dicas gerais que podem te ajudar.
 
@@ -145,12 +175,32 @@ Primeiro, identifique um seletor que retorne todas as publicações separadament
 
 Para testar os seletores e construir o raspador, você pode utilizar algumas destas alternativas:
 
-Inspetor Web
+* Inspetor Web: disponível nos navegadores, permite a busca por seletores XPath.
+  
+* Scrapy shell: você também pode testar seus seletores usando o Scrapy Shell. Experimente rodar por exemplo `scrapy shell "http://www.paulinia.sp.gov.br/semanarios"`. Neste terminal, você pode rodar códigos como `response.xpath("//div[@class='container body-content']//div[@class='row']//a[contains(@href, 'AbreSemanario')]")` e ver os resultados.
 
-scrapy shell
-scrapy shell "http://www.paulinia.sp.gov.br/semanarios"
+* Python debuger: insira a linha `import pdb; pdb.set_trace()` em meio a um loop para testar seu código durante a execução.
 
+# Enviando sua contribuição
+
+## Fazendo um commit
+
+## Compartilhando um raspador parcialmente completo
+
+## Compartilhando um raspador completo
 
 https://www.anapaulagomes.me/pt-br/2020/10/quero-tornar-di%C3%A1rios-oficiais-acess%C3%ADveis.-como-come%C3%A7ar/
 
+# Tarefas pendentes
 
+Se tiver dúvidas sobre algo, abra uma **issue** neste repositório.
+
+- [ ] Completar a lista de tutoriais introdutórios com materiais relevantes
+- [ ] Testar e reportar eventuais problemas com a configuração de ambiente no Windows
+- [ ] Testar e reportar eventuais problemas com a configuração de ambiente no Linux
+- [ ] Testar e reportar eventuais problemas com a configuração de ambiente no Mac OS
+- [ ] Documentar o processo de fazer um commit no repositório e problemas comuns
+- [ ] Fazer uma seção mostrando como enviar o seu raspador depois de feito
+- [ ] Melhorar a seção "Construindo um raspador de verdade".
+- [ ] Revisar e incorporar conteúdos faltantes (e ainda atuais) citados no artigo do [Vanz](http://jvanz.com/como-funciona-o-robozinho-do-serenata-que-baixa-os-diarios-oficiais.html)
+- [ ] Revisar e incorporar conteúdos faltantes (e ainda atuais) citados no [post]](https://www.anapaulagomes.me/pt-br/2020/10/quero-tornar-di%C3%A1rios-oficiais-acess%C3%ADveis.-como-come%C3%A7ar/) e na apresentação no [Coda.Br 2020](https://escoladedados.org/coda2020/workshop-querido-diario/) feito por Ana Paula Gomes.

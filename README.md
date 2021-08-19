@@ -91,3 +91,67 @@ Vejamos um exemplo a partir da cidade Paulínia em São Paulo.
 
 Além disso, cada raspador também precisa retornar algumas informações por padrão. Isso acontece usando a função `yield`.
 
+`date` = A data da publicação em questão.
+
+`file_urls` = Retorna a URL das publicações do DO. 
+
+`power` = Aceita os parâmetros `executive` ou `executive_legislative`. Aqui, definimos se o DO tem informações apenas do poder executivo ou também do legislativo. Para definir isso, é preciso olhar manualmente nas publicações se há informações da Câmara Municipal agregadas no mesmo documento, por exemplo.
+
+`is_extra_edition` = Sinalizamos aqui se é uma edição extra do Diário Oficial ou não.
+
+`edition_number` = Número da edição do DO em questão.
+
+# Hello world: faça sua primeira requisição
+
+O Scrapy começa fazendo uma requisição para a URL definida no parâmetro start_urls. A resposta dessa requisição vai para o método padrão parse, que irá armazenar a resposta da requisição na variável response.
+
+A variável response tem vários atributos, como o text, que traz o HTML da página em questão como uma string.
+
+Então, você pode começar sua primeira requisição com Scrapy com algum código parecido com este.
+
+
+```
+import datetime
+import scrapy
+from gazette.spiders.base import BaseGazetteSpider
+
+class SpPauliniaSpider(BaseGazetteSpider):
+    name = "sp_paulinia"
+    TERRITORY_ID = "2905206"
+    start_date = datetime.date(2010, 1, 4)
+    allowed_domains = ["www.paulinia.sp.gov.br/"]
+    start_urls = ["http://www.paulinia.sp.gov.br/semanarios/"]
+
+    def parse(self, response):
+        yield {
+            “date”: datetime.date.today(),
+            “file_urls”: [response.url],
+        }
+```
+
+
+
+https://gist.github.com/belisards/258bfbf83771d183be7649981772ccc0
+
+como ler o log?
+ver a partir do INFO: Spider opened
+buscar principalmente por WARNING e ERROR
+
+
+# Construindo um raspador
+
+Aqui, tudo vai depender da forma como cada site é construído. Mas separamos algumas dicas gerais que podem te ajudar.
+
+Primeiro, identifique um seletor que retorne todas as publicações separadamente. Se as publicações estão separadas em várias abas ou várias páginas, primeiro certifique-se de que todas elas seguem o mesmo padrão. Sendo o caso, então, você pode começar fazendo o raspador para a página mais recente e depois repetir as etapas para as demais, por meio de um loop, por exemplo.
+
+Para testar os seletores e construir o raspador, você pode utilizar algumas destas alternativas:
+
+Inspetor Web
+
+scrapy shell
+scrapy shell "http://www.paulinia.sp.gov.br/semanarios"
+
+
+https://www.anapaulagomes.me/pt-br/2020/10/quero-tornar-di%C3%A1rios-oficiais-acess%C3%ADveis.-como-come%C3%A7ar/
+
+

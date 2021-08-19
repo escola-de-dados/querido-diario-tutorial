@@ -11,7 +11,7 @@ Este é repositório ainda está em fase de elaboração. Abaixo, estão algumas
 Se você prefere uma apresentação sobre o projeto em vídeo, confira o workshop [Querido Diário: hoje eu tornei um Diário Oficial acessível](https://escoladedados.org/coda2020/workshop-querido-diario/) da Ana Paula Gomes no Coda.Br 2020.
 
 ## 🔎 Mapeando os Diários Oficiais
-Existem formas de colaborar com o Querido Diário sem precisar programar. Você pode participar de nosso Censo, por exemplo, e ajudar a mapear os Diários Oficiais de todos os municípios brasileiros.
+Existem formas de colaborar com o Querido Diário sem precisar programar. Você pode participar de nosso [Censo](https://censo.ok.org.br/), por exemplo, e ajudar a mapear os Diários Oficiais de todos os municípios brasileiros.
 
 Se você quiser botar a mão na massa e construir seu raspador, pode começar “adotando” uma cidade. Primeiro, encontre uma cidade que ainda não esteja listado no [arquivo CITIES.md do repositório](https://github.com/okfn-brasil/querido-diario/blob/main/CITIES.md). 
 
@@ -94,7 +94,7 @@ Vejamos um exemplo a partir da cidade Paulínia em São Paulo.
 
 `name` = Nome do raspador no mesmo padrão do nome do arquivo, sem a extensão. Exemplo: `sp_paulinia`.
 
-`TERRITORY_ID` = código da cidade no IBGE. Confira esta tabela da Wikipedia para descobrir o código da sua cidade. Exemplo: `2905206`.
+`TERRITORY_ID` = código da cidade no IBGE. Confira a [tabela do IBGE](https://www.ibge.gov.br/explica/codigos-dos-municipios.php) para descobrir o código da sua cidade. Exemplo: `2905206`.
 
 `allowed_domains` = Domínios nos quais o raspador irá atuar. Exemplo: `["www.paulinia.sp.gov.br/"]`
 

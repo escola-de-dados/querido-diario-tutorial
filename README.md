@@ -17,6 +17,17 @@ Para acompanhar o tutorial e construir um raspador, é necessário algum conheci
 - Git e Github
 - HTML,CSS, XPath
 
+![image](https://user-images.githubusercontent.com/3240562/130143298-9a9e6d48-3b22-4dfa-b87f-3e2cb155d41f.png)
+
+### Pareceu grego?
+
+Se você não se sente confortável com estas tecnologias, sugerimos a leitura dos seguintes tutoriais primeiro.
+
+* [Tutorial da documentação do Scrapy](https://docs.scrapy.org/en/latest/intro/tutorial.html)
+
+* [Introdução a XPath para raspagem de dados](https://escoladedados.org/tutoriais/xpath-para-raspagem-de-dados-em-html/)
+
+
 ## Configurando um ambiente de desenvolvimento
 Faça um fork do repositório oficial do Querido Diário na sua conta no Github.
 

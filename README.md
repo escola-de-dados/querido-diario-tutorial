@@ -2,7 +2,7 @@
 
 O [Querido Diário](https://queridodiario.ok.org.br/) é um projeto de código aberto da [Open Knowledge Brasil](https://ok.org.br/) que utiliza Python e outras tecnologias para libertar informações do Diário Oficial (DO) das administrações públicas no Brasil. A iniciativa mapeia, baixa e converte todas as páginas das publicações para um formato mais acessível, a fim de facilitar a análise de dados.
 
-Neste tutorial, mostraremos algumas orientações gerais para construir um raspador e contribuir com o projeto Querido Diário. 
+Neste tutorial, mostraremos algumas orientações gerais para construir um raspador e contribuir com o projeto Querido Diário.
 
 ## 💪 Colabore com o tutorial
 
@@ -13,7 +13,7 @@ Se você prefere uma apresentação sobre o projeto em vídeo, confira o worksho
 ## 🔎 Mapeando os Diários Oficiais
 Existem formas de colaborar com o Querido Diário sem precisar programar. Você pode participar de nosso [Censo](https://censo.ok.org.br/), por exemplo, e ajudar a mapear os Diários Oficiais de todos os municípios brasileiros.
 
-Se você quiser botar a mão na massa e construir seu raspador, pode começar “adotando” uma cidade. Primeiro, encontre uma cidade que ainda não esteja listado no [arquivo CITIES.md do repositório](https://github.com/okfn-brasil/querido-diario/blob/main/CITIES.md). 
+Se você quiser botar a mão na massa e construir seu raspador, pode começar “adotando” uma cidade. Primeiro, encontre uma cidade que ainda não esteja listado no [arquivo CITIES.md do repositório](https://github.com/okfn-brasil/querido-diario/blob/main/CITIES.md).
 
 O endereço do repositório do projeto é: https://github.com/okfn-brasil/querido-diario/
 
@@ -56,7 +56,7 @@ Usuários de Windows devem executar os mesmo comandos, apenas trocando o segundo
 
 Todos os raspadores do projeto ficam na pasta [data_collection/gazette/spiders/](https://github.com/okfn-brasil/querido-diario/tree/main/data_collection/gazette/spiders). Navegue por diferentes arquivos e repare no que há de comum e diferente no código de cada um.
 
-Os nomes de todos os arquivos seguem o padrão: **uf_nomedacidade.py**. 
+Os nomes de todos os arquivos seguem o padrão: **uf_nomedacidade.py**.
 
 Ou seja, primeiro, temos a sigla da UF, seguido de underline e nome da cidade. Tudo em minúsculas, sem espaços, acentos ou caracteres especiais.
 
@@ -66,23 +66,22 @@ Veja alguns exemplos paradigmáticos de Diários Oficiais:
 
 * **Busca de datas**: outra situação comum é quando você precisa preencher um formulário e fazer uma busca de datas para acessar as publicações. É caso por exemplo do script [ba_salvador.py](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/ba_salvador.py), que raspa as informações da capital baiana.
 
-* **Consulta via APIs**: pode ser também que os dados sobre as publicações estejam disponíveis via API, já organizados em um arquivo JSON. É o caso do raspador de [Natal](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/rn_natal.py).
+* **Consulta via APIs**: pode ser também que ao analisar as requisições do site, você descubra uma API escondida, com dados dos documentos já organizadas em um arquivo JSON, por exemplo. É o caso do raspador de [Natal](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/rn_natal.py).
 
-Se você navegou pelos raspadores, talvez tenha reparado que alguns códigos possuem apenas os metadados. Neste caso, tratam-se de municípios que compartilham o mesmo sistema de publicação. Então, tratamos eles conjuntamente, como associações de municípios, ao invés de repetir o mesmo raspador em cada arquivo.
+Se você navegou pelos raspadores, talvez tenha reparado que alguns raspadores praticamente não possuem código e quase se repetem entre si. Neste caso, tratam-se de municípios que compartilham o mesmo sistema de publicação. Então, tratamos eles conjuntamente, como associações de municípios, ao invés de repetir o mesmo raspador em cada arquivo.
 
-Mas não se preocupe com isso, por ora. Vamos voltar ao nosso exemplo e ver como construir um raspador completo individualmente.
+Mas não se preocupe com isso, por ora. Vamos voltar ao nosso exemplo e ver como construir um raspador completo para apenas uma cidade.
 
 ## 🧠 Anatomia de um raspador
 
 ![Script básico, com exemplo de Paulínia](img/sp_paulinia.png)
-
 <!-- Imagem gerada no site carbon.now.sh -->
 
 Por padrão, todos os raspadores começam importando alguns pacotes. Vejamos quais são.
 
 `import datetime`: pacote para lidar com datas.
 
-`import scrapy`: quem faz quase toda mágica acontecer. É o pacote utilizado para construir nossos raspadores.
+`from gazette.items import Gazette`: item que será salvo com campos que devem/podem ser preenchidos com os metadados dos diários.
 
 `from gazette.spiders.base import BaseGazetteSpider`: é o raspador (spider) base do projeto, que já traz várias funcionalidades úteis.
 
@@ -94,21 +93,21 @@ Vejamos um exemplo a partir da cidade Paulínia em São Paulo.
 
 `name` = Nome do raspador no mesmo padrão do nome do arquivo, sem a extensão. Exemplo: `sp_paulinia`.
 
-`TERRITORY_ID` = código da cidade no IBGE. Confira a [tabela do IBGE](https://www.ibge.gov.br/explica/codigos-dos-municipios.php) para descobrir o código da sua cidade. Exemplo: `2905206`.
+`TERRITORY_ID` = código da cidade no IBGE. Confira a o arquivo [`territories.csv`](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/resources/territories.csv) do projeto para descobrir o código da sua cidade. Exemplo: `2905206`.
 
-`allowed_domains` = Domínios nos quais o raspador irá atuar. Exemplo: `["www.paulinia.sp.gov.br/"]`
+`allowed_domains` = Domínios nos quais o raspador irá atuar. Exemplo: `["paulinia.sp.gov.br"]`
 
-`start_urls` = URL de início da navegação do raspador. A resposta dessa requisição inicial é encaminhada para a variável response, do método padrão do Scrapy chamado parse. Veremos mais sobre isso em breve. Exemplo:`["http://www.paulinia.sp.gov.br/semanarios/"]`
+`start_urls` = URL de início da navegação do raspador. A resposta dessa requisição inicial é encaminhada para a variável response, do método padrão do Scrapy chamado `parse`. Veremos mais sobre isso em breve. Exemplo:`["http://www.paulinia.sp.gov.br/semanarios/"]`
 
-`start_date` = Representação de data no formato ano, mês e dia (YYYY, M, D), usando o pacote datetime. É a data inicial da publicação do Diário Oficial no sistema questão, ou seja, a data da primeira publicação disponível online. Encontre esta data pesquisando e inserindo essa data manualmente nesta variável. Exemplo: `datetime.date(2017, 4, 3)`.
+`start_date` = Representação de data no formato ano, mês e dia (YYYY, M, D), usando o pacote `datetime`. É a data inicial da publicação do Diário Oficial no sistema questão, ou seja, a data da primeira publicação disponível online. Encontre esta data pesquisando e inserindo essa data manualmente nesta variável. Exemplo: `datetime.date(2017, 4, 3)`.
 
 ### Parâmetros de saída
 
-Além disso, cada raspador também precisa retornar algumas informações por padrão. Isso acontece usando a função `yield`.
+Além disso, cada raspador também precisa retornar algumas informações por padrão. Isso acontece usando a expressão `yield`.
 
 `date` = A data da publicação em questão. Em nosso código de exemplo, definimos este parâmetro como o dia de hoje, apenas para ter uma versão básica operacional do código. Porém, ao construir um raspador real, neste parâmetro você deverá indicar as datas corretas das publicações.
 
-`file_urls` = Retorna a URL das publicações do DO. 
+`file_urls` = Retorna a URL da publicação do DO (um documento pode ter mais de uma URL, mas é raro).
 
 `power` = Aceita os parâmetros `executive` ou `executive_legislative`. Aqui, definimos se o DO tem informações apenas do poder executivo ou também do legislativo. Para definir isso, é preciso olhar manualmente nas publicações se há informações da Câmara Municipal agregadas no mesmo documento, por exemplo.
 
@@ -128,16 +127,16 @@ Então, você pode uma forma de fazer um famoso "Hello, world!" no projeto Queri
 
 Para testar um raspador e começar a desenvolver o seu, siga as seguintes etapas:
 
-1. Importe o arquivo para a pasta `data_collection/gazette/spiders/` no repositório criado no seu computador.
+1. Importe o arquivo para a pasta `data_collection/gazette/spiders/` no repositório criado no seu computador a partir do seu fork do Querido Diário.
 2. Abra o terminal nesta pasta.
 3. Ative o ambiente virtual, caso não tenha feito antes. Rode `source .venv/bin/activate` ou o comando adequado na pasta onde o ambiente foi criado.
 4. No terminal, rode o raspador com o comando `scrapy crawl nomedoraspador`. Ou seja, no exemplo rodamos: `scrapy crawl sp_paulinia`.
 
 # 📄 Dissecando o arquivo log
 
-Se tudo deu certo, deve aparecer um arquivo de log enorme terminal. 
+Se tudo deu certo, deve aparecer um arquivo de log enorme terminal.
 
-Ele começa com **[scrapy.utils.log] INFO: Scrapy 2.4.1 started (bot: gazette)** e traz uma série de informações sobre o ambiente inicialmente. Mas a parte que mais nos interessa começa apenas após a linha **[scrapy.core.engine] INFO: Spider opened** e termina na linha **[scrapy.core.engine] INFO: Closing spider (finished)**. Vejamos abaixo.
+Ele começa com `[scrapy.utils.log] INFO: Scrapy 2.4.1 started (bot: gazette)` e traz uma série de informações sobre o ambiente inicialmente. Mas a parte que mais nos interessa começa apenas após a linha `[scrapy.core.engine] INFO: Spider opened` e termina na linha `[scrapy.core.engine] INFO: Closing spider (finished)`. Vejamos abaixo.
 
 ![](img/output1.png)
 
@@ -176,10 +175,10 @@ Primeiro, identifique um seletor que retorne todas as publicações separadament
 Para testar os seletores e construir o raspador, você pode utilizar algumas destas alternativas:
 
 * Inspetor Web: disponível nos navegadores, permite a busca por seletores XPath.
-  
+
 * Scrapy shell: você também pode testar seus seletores usando o Scrapy Shell. Experimente rodar por exemplo `scrapy shell "http://www.paulinia.sp.gov.br/semanarios"`. Neste terminal, você pode rodar códigos como `response.xpath("//div[@class='container body-content']//div[@class='row']//a[contains(@href, 'AbreSemanario')]")` e ver os resultados.
 
-* Python debuger: insira a linha `import pdb; pdb.set_trace()` em meio a um loop para testar seu código durante a execução.
+* Python debuger: insira a linha `import pdb; pdb.set_trace()` em qualquer parte do código que será executado para inspecionar seu código (contexto, variáveis, etc.) durante a execução.
 
 # Enviando sua contribuição
 

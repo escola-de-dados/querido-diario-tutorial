@@ -192,6 +192,7 @@ Para testar os seletores e construir o raspador, você pode utilizar algumas des
 
 Se tiver dúvidas sobre algo, abra uma **issue** neste repositório.
 
+- [ ] Gerar uma nova imagem de "print" do código inicial de Paulínia (o código foi alterado)
 - [ ] Completar a lista de tutoriais introdutórios com materiais relevantes
 - [ ] Testar e reportar eventuais problemas com a configuração de ambiente no Windows
 - [ ] Testar e reportar eventuais problemas com a configuração de ambiente no Linux

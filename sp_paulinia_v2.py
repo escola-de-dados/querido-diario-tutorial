@@ -44,6 +44,6 @@ class SpPauliniaSpider(BaseGazetteSpider):
                 date=gazette_date,
                 edition_number=edition_number,
                 file_urls=[link_pdf],
-                is_extra_edition=is_extra_edition,  # precisa corrigir
+                is_extra_edition=is_extra_edition, 
                 power="executive",
             )

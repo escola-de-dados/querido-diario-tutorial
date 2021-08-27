@@ -1,14 +1,9 @@
-#  source ../../../.venv/bin/activate
-#  scrapy crawl sp_paulinia
-
 import datetime
 import re
 
 from gazette.items import Gazette
 from gazette.spiders.base import BaseGazetteSpider
 import scrapy
-
-# from bs4 import BeautifulSoup
 
 
 class SpPauliniaSpider(BaseGazetteSpider):

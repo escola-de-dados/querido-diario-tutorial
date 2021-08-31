@@ -123,7 +123,7 @@ O Scrapy começa fazendo uma requisição para a URL definida no parâmetro `sta
 
 A variável `response` tem vários atributos, como o `text`, que traz o HTML da página em questão como uma *string*.
 
-Então, você pode uma forma de fazer um famoso "Hello, world!" no projeto Querido Diário seria com um código mais ou menos como este abaixo. Você encontra o código visto acima no arquivo [sp_paulinia.py](sp_paulina.py), presente neste repositório. Este código não baixa nenhum DO de fato, mas dá as bases para você entender como os raspadores operam e por onde começar a desenvolver o seu próprio.
+Então, você pode uma forma de fazer um famoso "Hello, world!" no projeto Querido Diário seria com um código mais ou menos como este abaixo. Você encontra o código visto acima no arquivo [sp_paulinia.py](sp_paulinia.py), presente neste repositório. Este código não baixa nenhum DO de fato, mas dá as bases para você entender como os raspadores operam e por onde começar a desenvolver o seu próprio.
 
 Para testar um raspador e começar a desenvolver o seu, siga as seguintes etapas:
 

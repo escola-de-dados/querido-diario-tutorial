@@ -1,9 +1,14 @@
+#  source ../../../.venv/bin/activate
+#  scrapy crawl sp_paulinia
+
 import datetime
 import re
 
 from gazette.items import Gazette
 from gazette.spiders.base import BaseGazetteSpider
 import scrapy
+
+# from bs4 import BeautifulSoup
 
 
 class SpPauliniaSpider(BaseGazetteSpider):
@@ -42,6 +47,8 @@ class SpPauliniaSpider(BaseGazetteSpider):
         editions = response.xpath(
             "//div[@class='container body-content']//div[@class='row']//a[contains(@href, 'AbreSemanario')]"
         )
+
+        regex_edicaoextra = re.compile("Edição Extra")
         for edition in editions:
             final_url = edition.xpath("./@href").get()
             link_pdf = "http://www.paulinia.sp.gov.br/semanarios/" + final_url
@@ -53,10 +60,16 @@ class SpPauliniaSpider(BaseGazetteSpider):
                 full_desc.split(sep)[0], "%d/%m/%Y"
             ).date()
             edition_number = full_desc.split(sep)[1]
-            is_extra_edition = full_desc.split(sep)[2].strip() == "Edição Extra"
 
-            self.logger.warning("LINK_PDF: ||%s||", link_pdf)
 
+            #try:
+            #    is_extra_edition = full_desc.split(sep)[2].strip() == "Edição Extra"
+            #except:
+            #    self.logger.warning("ERRO LINK_PDF: ||%s|| LEN(FULL_DESC) < 3: ||%s||", link_pdf, full_desc)
+
+            is_extra_edition = regex_edicaoextra.search(full_desc) != None
+
+            self.logger.warning("LINK_PDF: ||%s|| FULL_DESC: ||%s||", link_pdf, full_desc)
 
             yield Gazette(
                 date=gazette_date,

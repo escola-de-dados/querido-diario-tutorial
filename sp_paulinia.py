@@ -1,50 +1,36 @@
+#  source ../../../.venv/bin/activate
+#  scrapy crawl sp_paulinia
+
 import datetime
 import re
-
 from gazette.items import Gazette
 from gazette.spiders.base import BaseGazetteSpider
+
 import scrapy
 
-
 class SpPauliniaSpider(BaseGazetteSpider):
-    name = "sp_paulinia_v2"
+    name = "sp_paulinia"
     TERRITORY_ID = "2905206"
     start_date = datetime.date(2010, 1, 4)
-    allowed_domains = ["www.paulinia.sp.gov.br"]
+    allowed_domains = ["www.paulinia.sp.gov.br/"]
     start_urls = ["http://www.paulinia.sp.gov.br/semanarios"]
-    i = 0
-
-    def start_requests(self):
-        yield scrapy.Request(url=self.start_urls[0], callback=self.parse_years)
-
-
-    def parse_years(self, response):
-        self.i += 1
-        years = response.css("div.col-md-1").extract()
-
-        regex_year = re.compile(r">20\d{2}<")
-        regex_href = re.compile(r"ctl00(.*?)',")
-        for year in years:
-            year_parsed = regex_year.search(year)
-            href_parsed = regex_href.search(year)
-            self.logger.warning("|%d| YEAR: ||%s|| EVENTTARGET: ||%s||",
-                                self.i,
-                                year_parsed.group()[1:5],
-                                href_parsed.group()[:-2].replace('%24', '$'))
-
-            yield scrapy.FormRequest.from_response(
-                response,
-                formdata={'__EVENTTARGET': href_parsed.group()[:-2].replace('%24', '$')},
-                callback = self.parse
-            )
+    handle_httpstatus_list = [301]
 
     def parse(self, response):
+        # years = response.xpath('//a[starts-with(@id,"corpo_lnkItem")]')
+        # for year in years:
+        # link = print(year.xpath("./@href").get())
+        # current_year = xpath("//font/text()").get()).get()
+        # import pdb; pdb.set_trace()
+
         editions = response.xpath(
             "//div[@class='container body-content']//div[@class='row']//a[contains(@href, 'AbreSemanario')]"
         )
+        regex_edicaoextra = re.compile("Edição Extra")
+       
         for edition in editions:
             final_url = edition.xpath("./@href").get()
-            link_pdf = "http://www.paulinia.sp.gov.br/semanarios/" + final_url
+            link_pdf = self.start_urls[0] + final_url
 
             # Vamos separar as três informações da string "29/01/2021 - 1582 - Edição Normal"
             full_desc = edition.xpath("./text()").get()
@@ -53,24 +39,13 @@ class SpPauliniaSpider(BaseGazetteSpider):
                 full_desc.split(sep)[0], "%d/%m/%Y"
             ).date()
             edition_number = full_desc.split(sep)[1]
-            is_extra_edition = full_desc.split(sep)[2].strip() == "Edição Extra"
-
-            self.logger.warning("LINK_PDF: ||%s||", link_pdf)
-
+            is_extra_edition = regex_edicaoextra.search(full_desc) != None
+            self.logger.warning("LINK_PDF: ||%s|| FULL_DESC: ||%s||", link_pdf, full_desc)
 
             yield Gazette(
                 date=gazette_date,
                 edition_number=edition_number,
                 file_urls=[link_pdf],
-                is_extra_edition=is_extra_edition,
-                power="executive",
+                is_extra_edition=is_extra_edition, 
+                power="executive"
             )
-
-
-        #__EVENTTARGET: ctl00$corpo$lnkItem4
-        #__EVENTARGUMENT:
-        #__VIEWSTATE:
-        #__VIEWSTATEGENERATOR: C751677A
-        #__EVENTVALIDATION:
-
-

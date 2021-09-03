@@ -8,6 +8,9 @@ from gazette.items import Gazette
 from gazette.spiders.base import BaseGazetteSpider
 import scrapy
 
+from pprint import pprint
+import urllib
+
 # from bs4 import BeautifulSoup
 
 
@@ -43,6 +46,7 @@ class SpPauliniaSpider(BaseGazetteSpider):
                 callback = self.parse
             )
 
+
     def parse(self, response):
         editions = response.xpath(
             "//div[@class='container body-content']//div[@class='row']//a[contains(@href, 'AbreSemanario')]"
@@ -51,7 +55,8 @@ class SpPauliniaSpider(BaseGazetteSpider):
         regex_edicaoextra = re.compile("Edição Extra")
         for edition in editions:
             final_url = edition.xpath("./@href").get()
-            link_pdf = "http://www.paulinia.sp.gov.br/semanarios/" + final_url
+            #AbreSemanario.aspx?id=1177
+            link_pdf = "http://www.paulinia.sp.gov.br/" + final_url
 
             # Vamos separar as três informações da string "29/01/2021 - 1582 - Edição Normal"
             full_desc = edition.xpath("./text()").get()
@@ -60,27 +65,35 @@ class SpPauliniaSpider(BaseGazetteSpider):
                 full_desc.split(sep)[0], "%d/%m/%Y"
             ).date()
             edition_number = full_desc.split(sep)[1]
-
-
-            #try:
-            #    is_extra_edition = full_desc.split(sep)[2].strip() == "Edição Extra"
-            #except:
-            #    self.logger.warning("ERRO LINK_PDF: ||%s|| LEN(FULL_DESC) < 3: ||%s||", link_pdf, full_desc)
-
             is_extra_edition = regex_edicaoextra.search(full_desc) != None
 
             self.logger.warning("LINK_PDF: ||%s|| FULL_DESC: ||%s||", link_pdf, full_desc)
 
-            yield Gazette(
-                date=gazette_date,
-                edition_number=edition_number,
-                file_urls=[link_pdf],
-                is_extra_edition=is_extra_edition,
-                power="executive",
+            yield scrapy.Request(
+                link_pdf,
+                callback=self.download_pdf,
+                meta={'gazette_date': gazette_date,
+                      'edition_number': edition_number,
+                      'is_extra_edition': is_extra_edition}
             )
 
+    def download_pdf(self, response):
+        gazette_date = response.meta.get('gazette_date')
+        edition_number = response.meta.get('edition_number')
+        is_extra_edition = response.meta.get('is_extra_edition')
 
-        #__EVENTTARGET: ctl00$corpo$lnkItem4
+        pprint(urllib.parse.unquote_plus(response.url))
+
+        yield Gazette(
+            date=gazette_date,
+            edition_number=edition_number,
+            file_urls=[response.url],
+            is_extra_edition=is_extra_edition,
+            power="executive",
+        )
+
+
+    #__EVENTTARGET: ctl00$corpo$lnkItem4
         #__EVENTARGUMENT:
         #__VIEWSTATE:
         #__VIEWSTATEGENERATOR: C751677A

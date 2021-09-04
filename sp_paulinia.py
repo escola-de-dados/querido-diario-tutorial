@@ -2,16 +2,11 @@
 #  scrapy crawl sp_paulinia
 
 import datetime
-import re
+
+import scrapy
 
 from gazette.items import Gazette
 from gazette.spiders.base import BaseGazetteSpider
-import scrapy
-
-from pprint import pprint
-import urllib
-
-# from bs4 import BeautifulSoup
 
 
 class SpPauliniaSpider(BaseGazetteSpider):
@@ -20,83 +15,66 @@ class SpPauliniaSpider(BaseGazetteSpider):
     start_date = datetime.date(2010, 1, 4)
     allowed_domains = ["www.paulinia.sp.gov.br"]
     start_urls = ["http://www.paulinia.sp.gov.br/semanarios"]
-    i = 0
-
-    def start_requests(self):
-        yield scrapy.Request(url=self.start_urls[0], callback=self.parse_years)
-
-
-    def parse_years(self, response):
-        self.i += 1
-        years = response.css("div.col-md-1").extract()
-
-        regex_year = re.compile(r">20\d{2}<")
-        regex_href = re.compile(r"ctl00(.*?)',")
-        for year in years:
-            year_parsed = regex_year.search(year)
-            href_parsed = regex_href.search(year)
-            self.logger.warning("|%d| YEAR: ||%s|| EVENTTARGET: ||%s||",
-                                self.i,
-                                year_parsed.group()[1:5],
-                                href_parsed.group()[:-2].replace('%24', '$'))
-
-            yield scrapy.FormRequest.from_response(
-                response,
-                formdata={'__EVENTTARGET': href_parsed.group()[:-2].replace('%24', '$')},
-                callback = self.parse
-            )
-
 
     def parse(self, response):
+        years = response.css("div.col-md-1")
+
+        for year in years:
+            year_to_scrape = int(year.xpath("./a/font/text()").get())
+
+            # Para não fazer requisições desnecessárias, se o ano já for o da página
+            # inicial (página inicial é o ano atual) ou então for anterior ao ano da
+            # data inicial da busca, não iremos fazer a requisição
+            if (
+                year_to_scrape < self.start_date.year
+                or year_to_scrape == datetime.date.today().year
+            ):
+                continue
+
+            # Com Scrapy é possível utilizar regex direto no elemento com os métodos
+            # `.re` e `.re_first` (na maioria das vezes é suficiente e não precisamos
+            # usar métodos da biblioteca `re`)
+            event_target = year.xpath("./a/@href").re_first(r"(ctl00.*?)',")
+
+            # O método `.from_response` nesse caso é bem útil pois pega vários
+            # elementos do tipo <input> que já estão dentro do elemento <form>
+            # localizado na página e preenche eles automaticamente no formdata, assim
+            # é possível economizar muitas linhas de código
+            yield scrapy.FormRequest.from_response(
+                response,
+                formdata={"__EVENTTARGET": event_target},
+                callback=self.parse_year,
+            )
+
+        # O `yield from` permite fazermos `yield` em cada resultado do método gerador
+        # `self.parse_year`, assim, aqui estamos dando `yield` em todos os itens
+        # `Gazette` raspados da página inicial
+        yield from self.parse_year(response)
+
+    def parse_year(self, response):
         editions = response.xpath(
             "//div[@class='container body-content']//div[@class='row']//a[contains(@href, 'AbreSemanario')]"
         )
 
-        regex_edicaoextra = re.compile("Edição Extra")
         for edition in editions:
-            final_url = edition.xpath("./@href").get()
-            #AbreSemanario.aspx?id=1177
-            link_pdf = "http://www.paulinia.sp.gov.br/" + final_url
+            document_href = edition.xpath("./@href").get()
 
-            # Vamos separar as três informações da string "29/01/2021 - 1582 - Edição Normal"
-            full_desc = edition.xpath("./text()").get()
-            sep = " - "
+            title = edition.xpath("./text()")
+
             gazette_date = datetime.datetime.strptime(
-                full_desc.split(sep)[0], "%d/%m/%Y"
+                title.re_first(r"\d{2}/\d{2}/\d{4}"), "%d/%m/%Y"
             ).date()
-            edition_number = full_desc.split(sep)[1]
-            is_extra_edition = regex_edicaoextra.search(full_desc) != None
+            edition_number = title.re_first(r"- (\d+) -")
+            is_extra_edition = "extra" in title.get().lower()
 
-            self.logger.warning("LINK_PDF: ||%s|| FULL_DESC: ||%s||", link_pdf, full_desc)
-
-            yield scrapy.Request(
-                link_pdf,
-                callback=self.download_pdf,
-                meta={'gazette_date': gazette_date,
-                      'edition_number': edition_number,
-                      'is_extra_edition': is_extra_edition}
+            # Esse site "esconde" o link direto do PDF por trás de uma série de
+            # redirecionamentos, porém, como nas configurações do projeto é permitido
+            # que arquivos baixados sofram redirecionamento, é possível colocar o link
+            # "falso" já no item `Gazette` e o projeto vai conseguir baixar o documento
+            yield Gazette(
+                date=gazette_date,
+                edition_number=edition_number,
+                file_urls=[response.urljoin(document_href)],
+                is_extra_edition=is_extra_edition,
+                power="executive",
             )
-
-    def download_pdf(self, response):
-        gazette_date = response.meta.get('gazette_date')
-        edition_number = response.meta.get('edition_number')
-        is_extra_edition = response.meta.get('is_extra_edition')
-
-        pprint(urllib.parse.unquote_plus(response.url))
-
-        yield Gazette(
-            date=gazette_date,
-            edition_number=edition_number,
-            file_urls=[response.url],
-            is_extra_edition=is_extra_edition,
-            power="executive",
-        )
-
-
-    #__EVENTTARGET: ctl00$corpo$lnkItem4
-        #__EVENTARGUMENT:
-        #__VIEWSTATE:
-        #__VIEWSTATEGENERATOR: C751677A
-        #__EVENTVALIDATION:
-
-

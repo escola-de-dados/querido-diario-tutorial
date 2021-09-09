@@ -1,35 +1,35 @@
-# 🕷️📚 Raspe um Diário Oficial e contribua com o Querido Diário
+# Raspe um Diário Oficial e contribua com o Querido Diário 🕷️📚
 
 O [Querido Diário](https://queridodiario.ok.org.br/) é um projeto de código aberto da [Open Knowledge Brasil](https://ok.org.br/) que utiliza Python e outras tecnologias para libertar informações do Diário Oficial (DO) das administrações públicas no Brasil. A iniciativa mapeia, baixa e converte todas as páginas das publicações para um formato mais acessível, a fim de facilitar a análise de dados.
 
 Neste tutorial, mostraremos orientações gerais para construir um raspador e contribuir com o projeto Querido Diário.
 
-## 📑 Sumário
-  1. [Colabore com o tutorial](#colabore-com-o-tutorial)
-  2. [Mapeando e escolhendo Diários Oficiais](#mapeando-e-escolhendo-diarios-oficiais)
-  3. [Construindo o raspador](#construindo-o-raspador)
-  4. [Configurando um ambiente de desenvolvimento](#configurando-um-ambiente-de-desenvolvimento)
-  5. [Conhecendo os raspadores](#conhecendo-os-raspadores)
+## Sumário 📑
+  1. [Colabore com o tutorial](#colabore-com-o-tutorial-)
+  2. [Mapeando e escolhendo Diários Oficiais](#mapeando-e-escolhendo-diarios-oficiais-)
+  3. [Construindo o raspador](#construindo-o-raspador-)
+  4. [Configurando um ambiente de desenvolvimento](#configurando-um-ambiente-de-desenvolvimento-)
+  5. [Conhecendo os raspadores](#conhecendo-os-raspadores-)
       1. [Casos particulares](#casos-particulares)
-  6. [Anatomia de um raspador](#anatomia-de-um-raspador)
+  6. [Anatomia de um raspador](#anatomia-de-um-raspador-)
       1. [Parâmetros iniciais](#parametros-iniciais)
       2. [Parâmetros de saída](#parametros-de-saida)
-  7. [Hello world: faça sua primeira requisição](#hello-world-faca-sua-primeira-requisicao)
-  8. [Dissecando o log](#dissecando-o-log)
-  9. [Construindo um raspador de verdade](#construindo-um-raspador-de-verdade)
+  7. [Hello world: faça sua primeira requisição](#hello-world-faca-sua-primeira-requisicao-)
+  8. [Dissecando o log](#dissecando-o-log-)
+  9. [Construindo um raspador de verdade](#construindo-um-raspador-de-verdade-)
       1. [Identificando e testando os seletores](#identificando-e-testando-os-seletores)
       2. [Construindo o código do raspador](#construindo-o-codigo-do-raspador)
       3. [Dicas para testar o raspador](#dcas-para-testar-o-raspador)
-  10. [Enviando sua contribuição](#enviando-sua-contribuicao)
-  11. [Tarefas pendentes](#tarefas-pendentes)
+  10. [Enviando sua contribuição](#enviando-sua-contribuicao-)
+  11. [Tarefas pendentes](#tarefas-pendentes-)
 
-## 💪 Colabore com o tutorial
+## Colabore com o tutorial 💪
 
 Este repositório está em construção. No fim do documento, listamos algumas tarefas ainda pendentes. Você pode ajudar melhorando a documentação fazendo *pull requests* neste repositório.
 
 Se você prefere uma apresentação sobre o projeto em vídeo, confira o workshop [Querido Diário: hoje eu tornei um Diário Oficial acessível](https://escoladedados.org/coda2020/workshop-querido-diario/) da Ana Paula Gomes no [Coda.Br 2020](https://escoladedados.org/coda2020). Ainda que mudanças recentes possam ter alterado detalhes apresentados na oficina, o vídeo é uma ótima complementação a este tutorial. Você pode utilizar a *timestamp* na descrição do vídeo para assistir apenas trechos de seu interesse.
 
-## 🔎 Mapeando e escolhendo Diários Oficiais
+## Mapeando e escolhendo Diários Oficiais 🔎
 
 Existem formas de colaborar com o Querido Diário sem precisar programar. Você pode participar de nosso [Censo](https://censo.ok.org.br/), por exemplo, e ajudar a mapear os Diários Oficiais de todos os municípios brasileiros.
 
@@ -41,7 +41,7 @@ Antes de começar a trabalhar, vale também dar uma olhada na seção [Issues](h
 
 Se o raspador da sua cidade não consta como feito no [arquivo CITIES.md do repositório](https://github.com/okfn-brasil/querido-diario/blob/main/CITIES.md), não está na seção [Issues](https://github.com/okfn-brasil/querido-diario/issues), nem na aba de [Pull Requests](https://github.com/okfn-brasil/querido-diario/pulls), então, crie uma *Issue* nova para anunciar que você irá trabalhar no raspador da cidade escolhida.
 
-## 💻 Construindo o raspador
+## Construindo o raspador 💻
 
 Para acompanhar o tutorial e construir um raspador, é necessário instalar e conhecer algo sobre os seguintes softwares:
 
@@ -58,7 +58,7 @@ Se você não se sente confortável com estas tecnologias, sugerimos a leitura d
 
 - [Git Handbook](https://guides.github.com/introduction/git-handbook/)
 
-## 🌱 Configurando um ambiente de desenvolvimento
+## Configurando um ambiente de desenvolvimento 🌱
 
 [Faça um fork do repositório](https://docs.github.com/pt/github/getting-started-with-github/quickstart/fork-a-repo) do Querido Diário na sua conta no Github.
 
@@ -87,7 +87,7 @@ pre-commit install
 
 Usuários de Windows devem executar os mesmo comandos, apenas trocando o `source .venv/bin/activate` por `.venv\Scripts\activate.bat`.
 
-## 🕷 Conhecendo os raspadores
+## Conhecendo os raspadores 🕷
 
 Todos os raspadores do projeto ficam na pasta [data_collection/gazette/spiders/](https://github.com/okfn-brasil/querido-diario/tree/main/data_collection/gazette/spiders). Navegue por diferentes arquivos e repare no que há de comum e diferente no código de cada um.
 
@@ -111,7 +111,7 @@ Existem raspadores que não tem nome de cidade pois diversos municípios usam a 
 
 Mas para uma primeira contribuição não se preocupe com esses casos particulares. Vamos voltar ao nosso exemplo e ver como construir um raspador completo para apenas uma cidade.
 
-## 🧠 Anatomia de um raspador
+## Anatomia de um raspador 🧠
 
 Por padrão, todos os raspadores começam importando alguns pacotes. Vejamos quais são:
 
@@ -141,13 +141,13 @@ Além disso, cada raspador também precisa retornar algumas informações por pa
 
 Vejamos agora nosso código de exemplo.
 
-## 👋 Hello world: faça sua primeira requisição
+## Hello world: faça sua primeira requisição 👋
 
 O Scrapy começa fazendo uma requisição para a URL definida no parâmetro `start_urls`. A resposta dessa requisição vai para o método padrão `parse`, que irá armazenar a resposta na variável `response`.
 
 Então, uma forma de fazer um "Hello, world!" no projeto Querido Diário seria com um código como este abaixo.
 
-```
+```python
 import datetime
 from gazette.items import Gazette
 from gazette.spiders.base import BaseGazetteSpider
@@ -165,7 +165,6 @@ class SpPauliniaSpider(BaseGazetteSpider):
             file_urls=[response.url],
             power="executive",
         )
-
 ```
 
 Ele não baixa nenhum DO de fato (ele baixa o HTML da URL inicial), mas dá as bases para você entender como os raspadores operam e por onde começar a desenvolver o seu próprio.
@@ -178,7 +177,7 @@ Para testar um raspador e começar a desenvolver o seu, siga as seguintes etapas
 4. No terminal, vá para a pasta `data_collection`;
 5. No terminal, rode o raspador com o comando `scrapy crawl nome_do_raspador` (nome que está no atributo `name` da classe do raspador). Ou seja, no exemplo rodamos: `scrapy crawl sp_paulinia`.
 
-## 📄 Dissecando o log
+## Dissecando o log 📄
 
 Se tudo deu certo, deve aparecer um log enorme terminal.
 
@@ -197,7 +196,7 @@ Depois de encerrado o raspador, temos as linhas da seção dos *monitors*, que t
 
 Basicamente, estamos sendo avisados que nada foi raspado nos últimos dias. Tudo bem, este é apenas um teste inicial para irmos nos familiarizando com o projeto.
 
-## 🛠️ Construindo um raspador de verdade
+## Construindo um raspador de verdade 🛠️
 
 Aqui, tudo vai depender da forma como cada site é construído. Mas separamos algumas dicas gerais que podem te ajudar.
 
@@ -244,8 +243,85 @@ No exemplo completo para a cidade de Paulínia (SP), na página inicial temos li
 
 Veja como fica o raspador no exemplo a seguir (com comentários para explicar algumas partes do código para quem estiver começando agora):
 
-![Spider completa de Paulínia - SP](img/sp_paulinia_completo.png)
-<!-- Imagem gerada no site carbon.now.sh -->
+```python
+import datetime
+
+import scrapy
+
+from gazette.items import Gazette
+from gazette.spiders.base import BaseGazetteSpider
+
+
+class SpPauliniaSpider(BaseGazetteSpider):
+    name = "sp_paulinia"
+    TERRITORY_ID = "2905206"
+    start_date = datetime.date(2010, 1, 4)
+    allowed_domains = ["www.paulinia.sp.gov.br"]
+    start_urls = ["http://www.paulinia.sp.gov.br/semanarios"]
+
+    def parse(self, response):
+        years = response.css("div.col-md-1")
+
+        for year in years:
+            year_to_scrape = int(year.xpath("./a/font/text()").get())
+
+            # Para não fazer requisições desnecessárias, se o ano já for o da página
+            # inicial (página inicial é o ano atual) ou então for anterior ao ano da
+            # data inicial da busca, não iremos fazer a requisição
+            if (
+                year_to_scrape < self.start_date.year
+                or year_to_scrape == datetime.date.today().year
+            ):
+                continue
+
+            # Com Scrapy é possível utilizar regex direto no elemento com os métodos
+            # `.re` e `.re_first` (na maioria das vezes é suficiente e não precisamos
+            # usar métodos da biblioteca `re`)
+            event_target = year.xpath("./a/@href").re_first(r"(ctl00.*?)',")
+
+            # O método `.from_response` nesse caso é bem útil pois pega vários
+            # elementos do tipo <input> que já estão dentro do elemento <form>
+            # localizado na página e preenche eles automaticamente no formdata, assim
+            # é possível economizar muitas linhas de código
+            yield scrapy.FormRequest.from_response(
+                response,
+                formdata={"__EVENTTARGET": event_target},
+                callback=self.parse_year,
+            )
+
+        # O `yield from` permite fazermos `yield` em cada resultado do método gerador
+        # `self.parse_year`, assim, aqui estamos dando `yield` em todos os itens
+        # `Gazette` raspados da página inicial
+        yield from self.parse_year(response)
+
+    def parse_year(self, response):
+        editions = response.xpath(
+            "//div[@class='container body-content']//div[@class='row']//a[contains(@href, 'AbreSemanario')]"
+        )
+
+        for edition in editions:
+            document_href = edition.xpath("./@href").get()
+
+            title = edition.xpath("./text()")
+
+            gazette_date = datetime.datetime.strptime(
+                title.re_first(r"\d{2}/\d{2}/\d{4}"), "%d/%m/%Y"
+            ).date()
+            edition_number = title.re_first(r"- (\d+) -")
+            is_extra_edition = "extra" in title.get().lower()
+
+            # Esse site "esconde" o link direto do PDF por trás de uma série de
+            # redirecionamentos, porém, como nas configurações do projeto é permitido
+            # que arquivos baixados sofram redirecionamento, é possível colocar o link
+            # "falso" já no item `Gazette` e o projeto vai conseguir baixar o documento
+            yield Gazette(
+                date=gazette_date,
+                edition_number=edition_number,
+                file_urls=[response.urljoin(document_href)],
+                is_extra_edition=is_extra_edition,
+                power="executive",
+            )
+```
 
 No final do processo, teste seu raspador usando:
 
@@ -271,7 +347,7 @@ Como exemplo de uso de todas a opções anteriores em `sp_paulinia` a partir de 
 scrapy crawl sp_paulinia -a start_date=2020-12-01 -s FILES_STORE="" -s LOG_FILE=logs.txt -o output.json
 ```
 
-## Enviando sua contribuição
+## Enviando sua contribuição 🤝
 
 Ao fazer o commit do código, mencione a issue do raspador da sua cidade. Você pode incluir uma mensagem como `Close #20`, por exemplo, onde #20 é o número identificador da issue criada. Também adicione uma descrição comentando suas opções na hora de desenvolver o raspador ou eventuais incertezas.
 
@@ -281,7 +357,7 @@ Uma boa prática é sempre atualizar a ramificação (_branch_) que você está 
 
 Qualquer dúvida, abra o seu Pull Request em modo de rascunho (_draft_) e relate suas dúvidas para que pessoas do projeto possam te ajudar 😃. O [canal de discussões no Discord](https://discord.com/invite/nDc9p4drm4) também é aberto para tirar dúvidas e trocar ideias.
 
-## Tarefas pendentes
+## Tarefas pendentes ✔️
 
 - [ ] Revisar e incorporar conteúdos faltantes (e atuais) citados no artigo do [Vanz](http://jvanz.com/como-funciona-o-robozinho-do-serenata-que-baixa-os-diarios-oficiais.html).
 - [ ] Revisar e incorporar conteúdos faltantes (e atuais) citados no [post](https://www.anapaulagomes.me/pt-br/2020/10/quero-tornar-di%C3%A1rios-oficiais-acess%C3%ADveis.-como-come%C3%A7ar/) feito pela Ana Paula Gomes.

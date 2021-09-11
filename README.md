@@ -333,26 +333,32 @@ class SpPauliniaSpider(BaseGazetteSpider):
                 power="executive",
             )
 ```
+Para ajudar a debugar eventuais problemas na construção do código, você pode inserir a linha `import pdb; pdb.set_trace()` em qualquer trecho do raspador para inspecionar seu código (contexto, variáveis, etc.) durante a execução.
 
-No final do processo, teste seu raspador usando:
+
+### Rodando o raspador
+Para rodar o raspador, execute o seguinte comando no terminal:
 
 ```
 scrapy crawl nome_do_raspador
 ```
 
-### Dicas para testar o raspador
+No caso acima, seria:
 
-Para ajudar a debugar eventuais problemas na construção do código, você pode inserir a linha `import pdb; pdb.set_trace()` em qualquer trecho do raspador para inspecionar seu código (contexto, variáveis, etc.) durante a execução.
+```
+scrapy crawl sp_paulinia
+```
+O comando acima irá baixar os arquivos dos Diários Oficiais irá a pasta `data`. Durante o processo de desenvolvimento, muitas vezes é útil usar também os seguintes parâmetros adicionais na hora de rodar o raspador:
 
-É possível testar o raspador sem baixar nenhum arquivo adicionando `-s FILES_STORE=""` ao comando. Isso é útil para testar rápido se todas as requisições estão funcionando.
+- `-s FILES_STORE=""`: Testar o raspador sem baixar nenhum arquivo adicionando. Isso é útil para testar rápido se todas as requisições estão funcionando.
 
-Também podemos adicionar os itens extraídos para um arquivo com `-o output.csv` (ou outra extensão como `.json` ou `.jsonlines`), tornando possível analisar de forma bem mais fácil se o que está sendo raspado está correto.
+- `-o output.csv`: Adiciona os itens extraídos para um arquivo CSV. Também é possível usar outra extensão como `.json` ou `.jsonlines`. Isso facilita a análise do que está sendo raspado.
 
-Se o log estiver muito grande, é possível adicioná-lo a um arquivo de texto adicionando `-s LOG_FILE=logs.txt` ao comando, fazendo com que possíveis erros não passem despercebidos.
+- `-s LOG_FILE=logs.txt`: Salva os resultados do log em um arquivo texto. Se o log estiver muito grande, é útil para que erros não passem despercebidos.
 
-Também é muito importante testar se o filtro de data no raspador está funcionando. Utilizando o argumento `start_date`, apenas as requisições necessárias para extrair documentos a partir da data desejada devem ser feitas. Este teste pode ser feito com `-a start_date=2020-12-01` (para publicações a partir de 1 de dezembro de 2020). O atributo `start_date` do raspador é utilizado internamente, então se o argumento não for passado, o padrão (primeira data de publicação) é utilizado no lugar.
+- `-a start_date=2020-12-01`: Também é muito importante testar se o filtro de data no raspador está funcionando. Utilizando esse argumento, apenas as requisições necessárias para extrair documentos a partir da data desejada devem ser feitas. Este exemplo faz o teste para publicações a partir de 1 de dezembro de 2020. O atributo `start_date` do raspador é utilizado internamente, então, e o argumento não for passado, o padrão (primeira data de publicação) é utilizado no lugar.
 
-Como exemplo de uso de todas a opções anteriores em `sp_paulinia` a partir de 1 de dezembro de 2020:
+Para rodar o comando usando todas a opções anteriores em `sp_paulinia`, usaríamos o seguinte comando:
 
 ```
 scrapy crawl sp_paulinia -a start_date=2020-12-01 -s FILES_STORE="" -s LOG_FILE=logs.txt -o output.json

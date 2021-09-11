@@ -268,11 +268,12 @@ class SpPauliniaSpider(BaseGazetteSpider):
 
     # O parse abaixo irá partir da start_url acima
     def parse(self, response):
-        # Vamos criar um seletor para pegar uma lista com todos os código HTML onde os anos estão localizados
+        # Nosso seletor cria uma lista com os código HTML onde os anos estão localizados
         years = response.css("div.col-md-1")
         # E fazer um loop para extrair de fato o ano
         for year in years:
-            # Para cada item da lista (year) vamos pegar (get) um seletor XPath e dizer que queremos o resultado como um número inteiro (int)
+            # Para cada item da lista (year) vamos pegar (get) um seletor XPath.
+            # Também dizemos que queremos o resultado como um número inteiro (int)
             year_to_scrape = int(year.xpath("./a/font/text()").get())
 
             # Para não fazer requisições desnecessárias, se o ano já for o da página
@@ -368,6 +369,6 @@ Uma boa prática é sempre atualizar a ramificação (_branch_) que você está 
 Qualquer dúvida, abra o seu Pull Request em modo de rascunho (_draft_) e relate suas dúvidas para que pessoas do projeto tentem te ajudar 😃. O [canal de discussões no Discord](https://discord.com/invite/nDc9p4drm4) também é aberto para tirar dúvidas e trocar ideias.
 
 ## Tarefas pendentes ✔️
-
+- [ ] Melhorar a seção [Construindo um raspador de verdade](#construindo-um-raspador-de-verdade-)
 - [ ] Revisar e incorporar conteúdos faltantes (e atuais) citados no artigo do [Vanz](http://jvanz.com/como-funciona-o-robozinho-do-serenata-que-baixa-os-diarios-oficiais.html).
 - [ ] Revisar e incorporar conteúdos faltantes (e atuais) citados no [post](https://www.anapaulagomes.me/pt-br/2020/10/quero-tornar-di%C3%A1rios-oficiais-acess%C3%ADveis.-como-come%C3%A7ar/) feito pela Ana Paula Gomes.

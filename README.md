@@ -23,7 +23,6 @@ Se você prefere uma apresentação sobre o projeto em vídeo, confira o worksho
       2. [Construindo o código do raspador](#construindo-o-codigo-do-raspador)
       3. [Dicas para testar o raspador](#dcas-para-testar-o-raspador)
   10. [Enviando sua contribuição](#enviando-sua-contribuicao-)
-  11. [Tarefas pendentes](#tarefas-pendentes-)
 
 ## Colabore com o tutorial 💪
 
@@ -50,7 +49,9 @@ Para acompanhar o tutorial e construir um raspador, é necessário instalar e co
 - [Git](https://git-scm.com/) e Github
 - HTML,CSS,XPath
 
-Se você não se sente confortável com estas tecnologias, sugerimos a leitura dos seguintes tutoriais primeiro.
+Se você não se sente confortável com estas tecnologias, sugerimos os seguintes materiais:
+
+- [Python para zumbis](https://www.youtube.com/watch?v=YO58tXerKDc&list=PLUukMN0DTKCtbzhbYe2jdF4cr8MOWClXc)
 
 - [Tutorial da documentação do Scrapy](https://docs.scrapy.org/en/latest/intro/tutorial.html)
 
@@ -116,12 +117,12 @@ Mas para uma primeira contribuição não se preocupe com esses casos particular
 Por padrão, todos os raspadores começam importando alguns pacotes. Vejamos quais são:
 
 * `import datetime`: pacote para lidar com datas.
-* `from gazette.items import Gazette`: item que será salvo com campos de metadados que devem/podem ser preenchidos.
+* `from gazette.items import Gazette`: Chamamos de `Gazette` os arquivo de DOs encontrados pelos raspadores, ele irá armazenar também campos de metadados para cada publicação. 
 * `from gazette.spiders.base import BaseGazetteSpider`: é o raspador (spider) base do projeto, que já traz algumas funcionalidades úteis.
 
 ### Parâmetros iniciais
 
-Cada raspador traz uma classe em Python, que executa determinadas rotinas para cada página dos sites que publicam Diários Oficiais. Todas as classes possuem pelo menos as informações básicas abaixo:
+Cada raspador traz uma [classe em Python](https://www.youtube.com/watch?v=52ns4X7Ny6k&list=PLUukMN0DTKCtbzhbYe2jdF4cr8MOWClXc&index=41), que executa determinadas rotinas para cada página dos sites que publicam Diários Oficiais. Todas as classes possuem pelo menos as informações básicas abaixo:
 
 * `name`: Nome do raspador no mesmo padrão do nome do arquivo, sem a extensão. Exemplo: `sp_paulinia`.
 * `TERRITORY_ID`: código da cidade no IBGE. Confira a o arquivo [`territories.csv`](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/resources/territories.csv) do projeto para descobrir o código da sua cidade. Exemplo: `2905206`.
@@ -239,7 +240,7 @@ Normalmente, para completar o seu raspador você precisará fazer algumas requis
 
 Se você precisar fazer alguma requisição `GET`, o objeto de requisição `scrapy.Request` deve ser o suficiente. O objeto `scrapy.FormRequest` normalmente é usado para requisições `POST`, que enviam algum dado no `formdata`.
 
-Sempre que uma requisição for feita a partir de uma página, ela é feita utilizando a expressão `yield` e sua resposta será enviada para algum método da classe do raspador. As requisições tem alguns parâmetros essenciais (outros parâmetros podem ser vistos na documentação do Scrapy):
+Sempre que uma requisição for feita a partir de uma página, ela é feita utilizando a expressão `yield` e sua resposta será enviada para algum método da classe do raspador. Ou seja, além de um item (Gazette), como já vimos, o `yield` pode retornar uma requisição para outra página. As requisições têm alguns parâmetros essenciais (outros parâmetros podem ser vistos na documentação do Scrapy):
 
 * `url`: A URL da página que será acessada;
 * `callback`: O método da classe do raspador para o qual a resposta será enviada (por padrão, o método `parse` é utilizado);
@@ -259,7 +260,7 @@ from gazette.spiders.base import BaseGazetteSpider
 # Definição da classe do raspador
 class SpPauliniaSpider(BaseGazetteSpider):
 
-# Parâmetros iniciais
+    # Parâmetros iniciais
     name = "sp_paulinia"
     TERRITORY_ID = "2905206"
     start_date = datetime.date(2010, 1, 4)
@@ -373,8 +374,3 @@ Normalmente adicionar apenas um raspador necessita apenas de um único commit. M
 Uma boa prática é sempre atualizar a ramificação (_branch_) que você está desenvolvendo com o que está na `main` atualizada do projeto. Assim, se o projeto teve atualizações, você pode resolver algum conflito antes mesmo de fazer o Pull Request.
 
 Qualquer dúvida, abra o seu Pull Request em modo de rascunho (_draft_) e relate suas dúvidas para que pessoas do projeto tentem te ajudar 😃. O [canal de discussões no Discord](https://discord.com/invite/nDc9p4drm4) também é aberto para tirar dúvidas e trocar ideias.
-
-## Tarefas pendentes ✔️
-- [ ] Melhorar a seção [Construindo um raspador de verdade](#construindo-um-raspador-de-verdade-)
-- [ ] Revisar e incorporar conteúdos faltantes (e atuais) citados no artigo do [Vanz](http://jvanz.com/como-funciona-o-robozinho-do-serenata-que-baixa-os-diarios-oficiais.html).
-- [ ] Revisar e incorporar conteúdos faltantes (e atuais) citados no [post](https://www.anapaulagomes.me/pt-br/2020/10/quero-tornar-di%C3%A1rios-oficiais-acess%C3%ADveis.-como-come%C3%A7ar/) feito pela Ana Paula Gomes.

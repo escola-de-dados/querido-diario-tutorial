@@ -1,46 +1,46 @@
-[English (US)](README-en.md)
+[Português (BR)](README.md)
 
 # Raspe um Diário Oficial e contribua com o Querido Diário 🕷️📚
 
-O [Querido Diário](https://queridodiario.ok.org.br/) é um projeto de código aberto da [Open Knowledge Brasil](https://ok.org.br/) que utiliza Python e outras tecnologias para libertar informações do Diário Oficial (DO) das administrações públicas no Brasil. A iniciativa mapeia, baixa e converte todas as páginas das publicações para um formato mais acessível, a fim de facilitar a análise de dados.
+[Querido Diário](https://queridodiario.ok.org.br/) is an open-source project by “Open Knowledge Brasil” [Open Knowledge Brasil](https://ok.org.br/) that uses Python and other technologies to liberate information from the Official Gazette (DO) of public administrations in Brazil.  The initiative maps, downloads, and converts all pages of the publications into a more accessible format to facilitate data analysis.
 
-Neste tutorial, mostraremos orientações gerais para construir um raspador e contribuir com o projeto Querido Diário.
+In this tutorial, we will provide general guidelines for building a scraper and contributing to “Querido Diário” project.
 
-Se você prefere uma apresentação sobre o projeto em vídeo, confira o workshop [Querido Diário: hoje eu tornei um Diário Oficial acessível](https://escoladedados.org/coda2020/workshop-querido-diario/) da Ana Paula Gomes no [Coda.Br 2020](https://escoladedados.org/coda2020). Ainda que mudanças recentes possam ter alterado detalhes apresentados na oficina, o vídeo é uma ótima complementação a este tutorial. Você pode utilizar a *timestamp* na descrição do vídeo para assistir apenas trechos de seu interesse.
+If you prefer a video presentation about the project, feel free to check out the workshop [Querido Diário: hoje eu tornei um Diário Oficial acessível](https://escoladedados.org/coda2020/workshop-querido-diario/) taught by Ana Paula Gomes at [Coda.Br 2020](https://escoladedados.org/coda2020). Even though recent changes may have altered details presented in the workshop, the video is an excellent complement to this tutorial. You can use the *timestamp* in the video description to watch only the parts that interest you.
 
 ## Sumário 📑
-  1. [Colabore com o tutorial](#colabore-com-o-tutorial-)
-  2. [Mapeando e escolhendo Diários Oficiais](#mapeando-e-escolhendo-diarios-oficiais-)
-  3. [Construindo o raspador](#construindo-o-raspador-)
-  4. [Configurando um ambiente de desenvolvimento](#configurando-um-ambiente-de-desenvolvimento-)
-  5. [Conhecendo os raspadores](#conhecendo-os-raspadores-)
-      1. [Casos particulares](#casos-particulares)
-  6. [Anatomia de um raspador](#anatomia-de-um-raspador-)
-      1. [Parâmetros iniciais](#parametros-iniciais)
-      2. [Parâmetros de saída](#parametros-de-saida)
-  7. [Hello world: faça sua primeira requisição](#hello-world-faca-sua-primeira-requisicao-)
-  8. [Dissecando o log](#dissecando-o-log-)
-  9. [Construindo um raspador de verdade](#construindo-um-raspador-de-verdade-)
-      1. [Identificando e testando os seletores](#identificando-e-testando-os-seletores)
-      2. [Construindo o código do raspador](#construindo-o-codigo-do-raspador)
-      3. [Dicas para testar o raspador](#dcas-para-testar-o-raspador)
-  10. [Enviando sua contribuição](#enviando-sua-contribuicao-)
+  1. [Collaborate in this tutorial](#collaborate-in-this-tutorial-)
+  2. [Mapping and Choosing Official Gazettes](#mapping-and-choosing-official-gazettes-)
+  3. [Building a scraper](#building-a-scraper-)
+  4. [Setting up a development environment](#setting-up-a-development-environment-)
+  5. [Getting to know the scrapers](#getting-to-know-the-scrapers-)
+      1. [Specific cases](#casos-particulares)
+  6. [Anatomy of a scraper](#anatomia-de-um-raspador-)
+      1. [Initial parameters](#parametros-iniciais)
+      2. [Output parameters](#parametros-de-saida)
+  7. [Hello world: make your first request](#hello-world-faca-sua-primeira-requisicao-)
+  8. [Dissecting the log](#dissecando-o-log-)
+  9. [Building a real scraper](#construindo-um-raspador-de-verdade-)
+      1. [Identifying and testing selectors](#identificando-e-testando-os-seletores)
+      2. [Writing the scraper code](#construindo-o-codigo-do-raspador)
+      3. [Hints to test a scraper](#dcas-para-testar-o-raspador)
+  10. [Sending your contribution](#enviando-sua-contribuicao-)
 
-## Colabore com o tutorial 💪
+## Collaborate in this tutorial 💪
 
-Este documento está em constante construção. Você pode ajudar a melhorar esta documentação fazendo *pull requests* neste repositório.
+This document is constantly under construction. You can help improve this documentation by making *pull requests* to this repository.
 
-## Mapeando e escolhendo Diários Oficiais 🔎
+## Mapping and Choosing Official Gazettess 🔎
 
-Existem formas de colaborar com o Querido Diário sem precisar programar. Você pode participar do [Censo](https://censo.ok.org.br/), por exemplo, e ajudar a mapear os Diários Oficiais de todos os municípios brasileiros.
+There are ways to collaborate with Querido Diário without having to program. You can participate in the [Census](https://censo.ok.org.br/), for example, and help map the Official Gazettes of all Brazilian municipalities.
 
-Se você quiser botar a mão na massa e construir seu raspador, pode começar “adotando” uma cidade. Primeiro, encontre uma cidade que ainda não esteja listada no [arquivo CITIES.md do repositório](https://github.com/okfn-brasil/querido-diario/blob/main/CITIES.md).
+If you want to get your hands dirty and build your scraper, you can start by “adopting” a city. First, find a city that is not already listed in the [repository CITIES.md file](https://github.com/okfn-brasil/querido-diario/blob/main/CITIES.md).
 
-O endereço do repositório do projeto é: https://github.com/okfn-brasil/querido-diario/
+The project repository address is: https://github.com/okfn-brasil/querido-diario/
 
-Antes de começar a trabalhar, vale também dar uma olhada na seção [Issues](https://github.com/okfn-brasil/querido-diario/issues) e [Pull Requests](https://github.com/okfn-brasil/querido-diario/pulls). Assim, você consegue checar se já existe um raspador para a cidade escolhida que ainda não tenha sido incorporado ao projeto (*Pull Requests*) ou se há outras pessoas trabalhando no código para o município (*Issues*).
+Before starting work, it's also worth taking a look at the [Issues](https://github.com/okfn-brasil/querido-diario/issues) and [Pull Requests](https://github.com/okfn/querido-diario/pulls). This way, you can check if there is already a scraper for the chosen city that has not yet been incorporated into the project (*Pull Requests*) or if there are other people working on the code for the municipality (*Issues*).
 
-Se o raspador da sua cidade não consta como feito no [arquivo CITIES.md do repositório](https://github.com/okfn-brasil/querido-diario/blob/main/CITIES.md), não está na seção [Issues](https://github.com/okfn-brasil/querido-diario/issues), nem na aba de [Pull requests](https://github.com/okfn-brasil/querido-diario/pulls), então, crie uma *Issue* nova para anunciar que você irá trabalhar no raspador da cidade escolhida.
+If your city's scraper does not appear as done in the [CITIES.md file in the repository](https://github.com/okfn-brasil/querido-diario/blob/main/CITIES.md), it is not in the section [ Issues](https://github.com/okfn-brasil/querido-diario/issues), nor in the [Pull requests](https://github.com/okfn-brasil/querido-diario/pulls) tab, So, create a new *Issue* to announce that you will work at the scraper in the chosen city.
 
 ## Construindo o raspador 💻
 

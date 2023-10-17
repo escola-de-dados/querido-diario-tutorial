@@ -42,44 +42,44 @@ Before starting work, it's also worth taking a look at the [Issues](https://gith
 
 If your city's scraper does not appear as done in the [CITIES.md file in the repository](https://github.com/okfn-brasil/querido-diario/blob/main/CITIES.md), it is not in the section [ Issues](https://github.com/okfn-brasil/querido-diario/issues), nor in the [Pull requests](https://github.com/okfn-brasil/querido-diario/pulls) tab, So, create a new *Issue* to announce that you will work at the scraper in the chosen city.
 
-## Construindo o raspador 💻
+## Building a scraper 💻
 
-Para acompanhar o tutorial e construir um raspador, é necessário instalar e conhecer algo sobre os seguintes softwares:
+To follow this tutorial and build a scraper, you need to install and know something about the following softwares:
 
-- Uso do terminal
-- [Python](https://www.python.org/) e o pacote Scrapy
-- [Git](https://git-scm.com/) e Github
-- HTML,CSS,XPath
+- Use of the terminal
+- [Python](https://www.python.org/) and the Scrapy package
+- [Git](https://git-scm.com/) and Github
+- HTML, CSS, XPath
 
-Se você não se sente confortável com estas tecnologias, sugerimos os seguintes materiais:
+If you are not comfortable with these technologies, we suggest the following materials:
 
-- [Python para zumbis](https://www.youtube.com/watch?v=YO58tXerKDc&list=PLUukMN0DTKCtbzhbYe2jdF4cr8MOWClXc)
+- [Python for zombies](https://www.youtube.com/watch?v=YO58tXerKDc&list=PLUukMN0DTKCtbzhbYe2jdF4cr8MOWClXc)
 
-- [Tutorial da documentação do Scrapy](https://docs.scrapy.org/en/latest/intro/tutorial.html)
+- [Scrapy Documentation Tutorial](https://docs.scrapy.org/en/latest/intro/tutorial.html)
 
-- [Introdução a XPath para raspagem de dados](https://escoladedados.org/tutoriais/xpath-para-raspagem-de-dados-em-html/)
+- [Introduction to XPath for data scraping](https://escoladedados.org/tutoriais/xpath-para-raspagem-de-dados-em-html/)
 
 - [Git Handbook](https://guides.github.com/introduction/git-handbook/)
 
 ## Configurando um ambiente de desenvolvimento 🌱
 
-[Faça um fork do repositório](https://docs.github.com/pt/github/getting-started-with-github/quickstart/fork-a-repo) do Querido Diário na sua conta no Github.
+[Fork the Querido Diario repository](https://docs.github.com/pt/github/getting-started-with-github/quickstart/fork-a-repo) in your Github account.
 
-Em seguida, clone este novo repositório para seu computador e crie uma nova branch para a cidade que irá trabalhar:
+Then, clone this new repository to your computer and create a new branch for the city you will work on:
 
 ```sh
-git checkout -b <sigladoestado>-<cidade>
+git checkout -b <state acronym>-<city>
 ```
 
-Vejamos um exemplo com a cidade Paulínia em São Paulo:
+Let's look at an example with the city Paulínia in São Paulo:
 
 ```sh
 git checkout -b sp-paulinia
 ```
 
-Se você usa Windows, baixe as [Ferramentas de Build do Visual Studio](https://visualstudio.microsoft.com/pt-br/downloads/#build-tools-for-visual-studio-2019) e execute o instalador. Durante a instalação, selecione a opção “Desenvolvimento para desktop com C++” e finalize o processo.
+If you use Windows, download [Visual Studio Build Tools](https://visualstudio.microsoft.com/pt-br/downloads/#build-tools-for-visual-studio-2019) and run the installer. During installation, select the “Desktop development with C++” option and complete the process.
 
-Se você usa Linux ou Mac Os, pode simplesmente executar os seguintes comandos. Eles também estão descritos no README do projeto, na parte de configuração de ambiente.
+If you use Linux or Mac Os, you can simply run the following commands. They are also described in the project's README, in the environment configuration part.
 
 ```py
 python3 -m venv .venv
@@ -88,33 +88,33 @@ pip install -r data_collection/requirements.txt
 pre-commit install
 ```
 
-Usuários de Windows devem executar os mesmo comandos, apenas trocando o `source .venv/bin/activate` por `.venv\Scripts\activate.bat`.
+Windows users must execute the same commands, just replacing the `source .venv/bin/activate` with `.venv\Scripts\activate.bat`.
 
-## Conhecendo os raspadores 🕷
+## Getting to know the scrapers 🕷
 
-Todos os raspadores do projeto ficam na pasta [data_collection/gazette/spiders/](https://github.com/okfn-brasil/querido-diario/tree/main/data_collection/gazette/spiders). Navegue por diferentes arquivos e repare no que há de comum e diferente no código de cada um.
+All project scrapers are located in the folder [data_collection/gazette/spiders/](https://github.com/okfn-brasil/querido-diario/tree/main/data_collection/gazette/spiders). Browse different files and notice what's common and different in each one's code.
 
-Os nomes de todos os arquivos seguem o padrão: **uf_nome_da_cidade.py**.
+The names of all files follow the pattern: **uf_nome_da_cidade.py**.
 
-Ou seja, primeiro, temos a sigla da UF, seguido de _underline_ e nome da cidade. Tudo em minúsculas, sem espaços, acentos ou caracteres especiais e separando as palavras com _underline_.
+In other words, first, we have the UF acronym (federative unit, Unidade Federativa in portuguese), followed by _underscore_ and the name of the city. All in lowercase, without spaces, accents or special characters and separating words with _underscore_.
 
-Para se familiarizar, sugerimos que você navegue por alguns exemplos paradigmáticos de Diários Oficiais:
+To familiarize yourself, we suggest you browse some paradigmatic examples of Official Gazettes:
 
-* **Paginação**: um bom exemplo de raspador onde as publicações estão separadas em várias páginas é o [da cidade de Manaus](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/am_manaus.py).
+* **Pagination**: a good example of a scraper where publications are separated into several pages is [from the city of Manaus](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection /gazette/spiders/am_manaus.py).
 
-* **Busca de datas**: outra situação comum é quando você precisa preencher um formulário e fazer uma busca de datas para acessar as publicações. É caso por exemplo do script [ba_salvador.py](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/ba_salvador.py), que raspa as informações da capital baiana.
+* **Data search**: another common situation is when you need to fill out a form and search for data to access publications. This is the case, for example, of the script [ba_salvador.py](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/ba_salvador.py), which scrapes information from Bahia's capital.
 
-* **Consulta via APIs**: pode ser também que ao analisar as requisições do site, você descubra uma API escondida, com dados dos documentos já organizadas em um arquivo JSON, por exemplo. É o caso do raspador de [Natal](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/rn_natal.py). Na Escola de Dados, é possível encontrar um webinar sobre [raspagem de dados por meio de "APIs escondidas"](https://escoladedados.org/2021/05/como-descobrir-apis-escondidas-para-facilitar-a-raspagem-de-dados/), que pode ser útil para quem está começando.
+* **Query via APIs**: also when analyzing the website's requests, you discover a hidden API, with document data already organized in a JSON file, for example. This is the case with the [Natal] scraper(https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/rn_natal.py). At Escola de Dados, you can find a webinar about [data scraping through "hidden APIs"](https://escoladedados.org/2021/05/como-descobrir-apis-escondidas-para-facilitar-a- data-scraping/), which can be useful for those just starting out.
 
-### Casos particulares
+### Specific cases
 
-Você talvez tenha reparado que alguns raspadores praticamente não possuem código e quase se repetem entre si. Neste caso, tratam-se de municípios que compartilham o mesmo sistema de publicação. Então, tratamos eles conjuntamente, modificando apenas o necessário de raspador para raspador, ao invés de repetir o mesmo código em cada arquivo. É o caso, por exemplo, de cidades em Santa Catarina como [**Abdon Batista**](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/sc_abdon_batista.py) e [**Agrolândia**](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/sc_agrolandia.py).
+You may have noticed that some scrapers have practically no code and almost repeat themselves. In this case, these are municipalities that share the same publication system. So, we treat them together, modifying only what is necessary from scraper to scraper, instead of repeating the same code in each file. This is the case, for example, of cities in Santa Catarina such as [**Abdon Batista**](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/sc_abdon_batista. py) and [**Agrolândia**](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/sc_agrolandia.py).
 
-Existem raspadores que não têm nome de cidade pois diversos municípios usam a mesma plataforma para publicar seus Diários Oficiais. São normalmente sites de associações de municípios. É o caso de [**ba_associacao_municipios.py**](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/ba_associacao_municipios.py).
+There are scrapers that do not have a city name because several municipalities use the same platform to publish their Official Gazettes. They are usually municipal association websites. This is the case of [**ba_associacao_municipios.py**](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/spiders/ba_associacao_municipios.py).
 
-Mas para uma primeira contribuição não se preocupe com esses casos particulares. Vamos voltar ao nosso exemplo e ver como construir um raspador completo para apenas uma cidade.
+But for a first contribution, don't worry about these particular cases. Let's go back to our example and see how to build a complete scraper for just one city.
 
-## Anatomia de um raspador 🧠
+## Anatomy of a scraper 🧠
 
 Por padrão, todos os raspadores começam importando alguns pacotes. Vejamos quais são:
 

@@ -23,7 +23,7 @@ If you prefer a video presentation about the project, feel free to check out the
   9. [Building a real scraper](#construindo-um-raspador-de-verdade-)
       1. [Identifying and testing selectors](#identificando-e-testando-os-seletores)
       2. [Writing the scraper code](#construindo-o-codigo-do-raspador)
-      3. [Hints to test a scraper](#dcas-para-testar-o-raspador)
+      3. [Tips to test a scraper](#dcas-para-testar-o-raspador)
   10. [Sending your contribution](#enviando-sua-contribuicao-)
 
 ## Collaborate in this tutorial 💪
@@ -118,37 +118,37 @@ But for a first contribution, don't worry about these particular cases. Let's go
 
 Por padrão, todos os raspadores começam importando alguns pacotes. Vejamos quais são:
 
-* `import datetime`: pacote para lidar com datas.
-* `from gazette.items import Gazette`: Chamamos de `Gazette` os arquivo de DOs encontrados pelos raspadores, ele irá armazenar também campos de metadados para cada publicação. 
-* `from gazette.spiders.base import BaseGazetteSpider`: é o raspador (spider) base do projeto, que já traz algumas funcionalidades úteis.
+* `import datetime`: package to handle dates.
+* `from gazette.items import Gazette`: We call the file of official gazettes found by the scrapers `Gazette`, it will also store metadata fields for each publication.
+* `from gazette.spiders.base import BaseGazetteSpider`: is the project's base spider, which already brings some useful features.
 
-### Parâmetros iniciais
+### Initial parameters
 
-Cada raspador traz uma [classe em Python](https://www.youtube.com/watch?v=52ns4X7Ny6k&list=PLUukMN0DTKCtbzhbYe2jdF4cr8MOWClXc&index=41), que executa determinadas rotinas para cada página dos sites que publicam Diários Oficiais. Todas as classes possuem pelo menos as informações básicas abaixo:
+Each scraper has a [Python class](https://www.youtube.com/watch?v=52ns4X7Ny6k&list=PLUukMN0DTKCtbzhbYe2jdF4cr8MOWClXc&index=41), which executes certain routines for each page of websites that publish Official Gazettes. All classes have at least the basic information below:
 
-* `name`: Nome do raspador no mesmo padrão do nome do arquivo, sem a extensão. Exemplo: `sp_paulinia`.
-* `TERRITORY_ID`: código da cidade no IBGE. Confira a o arquivo [`territories.csv`](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/resources/territories.csv) do projeto para descobrir o código da sua cidade. Exemplo: `2905206`.
-* `allowed_domains`: Domínios nos quais o raspador irá atuar. Tenha atenção aos colchetes. Eles indicam que se trata de uma lista, ainda que tenha apenas um elemento. Exemplo: `["paulinia.sp.gov.br"]`
-* `start_urls`: lista com URLs de início da navegação do raspador (normalmente apenas uma). A resposta dessa requisição inicial é encaminhada para a variável `response`, do método padrão do Scrapy chamado `parse`. Veremos mais sobre isso em breve. Novamente, atenção aos colchetes. Exemplo:`["http://www.paulinia.sp.gov.br/semanarios/"]`
-* `start_date`: Representação de data no formato ano, mês e dia (YYYY, M, D) com `datetime.date`. É a data inicial da publicação do Diário Oficial no sistema questão, ou seja, a data da primeira publicação disponível online. Encontre esta data pesquisando e a insira manualmente nesta variável. Exemplo: `datetime.date(2017, 4, 3)`.
+* `name`: Scraper name in the same pattern as the file name, without the extension. Example: `sp_paulinia`.
+* `TERRITORY_ID`: city code at IBGE. Check the project file [`territories.csv`](https://github.com/okfn-brasil/querido-diario/blob/main/data_collection/gazette/resources/territories.csv) to find out your city's code . Example: `2905206`.
+* `allowed_domains`: Domains on which the scraper will act. Pay attention to the brackets. They indicate that it is a list, even though it only has one element. Example: `["paulinia.sp.gov.br"]`
+* `start_urls`: list of scraper navigation start URLs (normally just one). The response to this initial request is forwarded to the variable `response`, of the standard Scrapy method called `parse`. We'll see more about this soon. Again, pay attention to the brackets. Example:`["http://www.paulinia.sp.gov.br/semanarios/"]`
+* `start_date`: Date representation in the format year, month and day (YYYY, M, D) with `datetime.date`. It is the initial date of publication of the Official Gazette in the question system, that is, the date of the first publication available online. Find this date by searching and manually enter it into this variable. Example: `datetime.date(2017, 4, 3)`.
 
-### Parâmetros de saída
+### Output parameters
 
-Além disso, cada raspador também precisa retornar algumas informações por padrão. Isso acontece usando a expressão `yield` nos itens criados do tipo `Gazette`.
+Additionally, each scraper also needs to return some information by default. This happens using the `yield` expression on `Gazette` items created.
 
-* `date`: A data da publicação do diário. 
-* `file_urls`: Retorna as URLs da publicação do DO como uma lista. Um documento pode ter mais de uma URL, mas não é algo comum.
-* `power`: Aceita os parâmetros `executive` ou `executive_legislative`. Aqui, definimos se o DO tem informações apenas do poder executivo ou também do legislativo. Para definir isso, é preciso olhar manualmente nas publicações se há informações da Câmara Municipal agregadas no mesmo documento, por exemplo.
-* `is_extra_edition`: Sinalizamos aqui se é uma edição extra do Diário Oficial ou não. Edições extras são edições completas do diário que são publicadas fora do calendário previsto.
-* `edition_number`: Número da edição do DO em questão.
+* `date`: The publication date of the gazette.
+* `file_urls`: returns the official gazette publication URLs as a list. A document can have more than one URL, but this is not common.
+* `power`: Accepts `executive` or `executive_legislative` settings. Here, we define whether the official gazette has information only from the executive branch or also from the legislative branch. To define this, you need to manually look in the publications to see if there is information from the City Council ("câmara municipal") aggregated in the same document, for example.
+* `is_extra_edition`: We indicate here whether it is an extra edition of the Official Gazette or not. Extra editions are complete editions of the diary that are published outside the scheduled schedule.
+* `edition_number`: Edition number of the DO in question.
 
-Vejamos agora nosso código de exemplo.
+Let's now look at our example code.
 
-## Hello world: faça sua primeira requisição 👋
+## Hello world: make your first request 👋
 
-O Scrapy começa fazendo uma requisição para a URL definida no parâmetro `start_urls`. A resposta dessa requisição vai para o método padrão `parse`, que irá armazenar a resposta na variável `response`.
+Scrapy starts by making a request to the URL defined in the `start_urls` parameter. The response from this request goes to the standard `parse` method, which will store the response in the `response` variable.
 
-Então, uma forma de fazer um "Hello, world!" no projeto Querido Diário seria com um código como este abaixo.
+So, one way to say "Hello, world!" in the Querido Diario project it would be with code like the one below.
 
 ```python
 import datetime
@@ -157,11 +157,11 @@ from gazette.spiders.base import BaseGazetteSpider
 
 class SpPauliniaSpider(BaseGazetteSpider):
     name = "sp_paulinia"
-    TERRITORY_ID = "2905206"
+    TERRITORY_ID = "2905701"
     start_date = datetime.date(2010, 1, 4)
     allowed_domains = ["paulinia.sp.gov.br"]
     start_urls = ["http://www.paulinia.sp.gov.br/semanarios/"]
-
+    
     def parse(self, response):
         yield Gazette(
             date=datetime.date.today(),
@@ -170,11 +170,11 @@ class SpPauliniaSpider(BaseGazetteSpider):
         )
 ```
 
-O código baixa o HTML da URL inicial, mas não descarrega nenhum DO de fato. Definimos este parâmetro como o dia de hoje, apenas para ter uma versão básica operacional do código. Porém, ao construir um raspador real, neste parâmetro você deverá indicar as datas corretas das publicações.
+The code downloads the HTML from the initial URL, but does not actually download any official gazette. We set this parameter to today, just to have a basic operational version of the code. However, when building a real scraper, you will need to indicate the correct dates of publications.
 
-De todo modo, isso dá as bases para você entender como os raspadores operam e por onde começar a desenvolver o seu próprio.
+Either way, this gives you the foundation to understand how scrapers operate and where to start developing your own.
 
-Para rodar o código, você pode seguir as seguintes etapas:
+To run the code, you can follow the following steps:
 
 1. Crie um arquivo na pasta `data_collection/gazette/spiders/` do repositório criado no seu computador a partir do seu fork do Querido Diário;
 2. Abra o terminal na raíz do projeto;
@@ -182,63 +182,63 @@ Para rodar o código, você pode seguir as seguintes etapas:
 4. No terminal, vá para a pasta `data_collection`;
 5. No terminal, rode o raspador com o comando `scrapy crawl nome_do_raspador` (nome que está no atributo `name` da classe do raspador). Ou seja, no exemplo rodamos: `scrapy crawl sp_paulinia`.
 
-## Dissecando o log 📄
+## Dissecting the log 📄
 
-Se tudo deu certo, deve aparecer um log enorme terminal.
+If everything went well, a huge log should appear in the terminal.
 
-Ele começa com algo como `[scrapy.utils.log] INFO: Scrapy 2.4.1 started (bot: gazette)` e traz uma série de informações sobre o ambiente inicialmente. Mas a parte que mais nos interessa começa apenas após a linha `[scrapy.core.engine] INFO: Spider opened` e termina na linha `[scrapy.core.engine] INFO: Closing spider (finished)`. Vejamos abaixo.
+It starts with something like `[scrapy.utils.log] INFO: Scrapy 2.4.1 started (bot: gazette)` and brings a series of information about the environment initially. But the part that interests us most begins just after the line `[scrapy.core.engine] INFO: Spider opened` and ends at the line `[scrapy.core.engine] INFO: Closing spider (finished)`. Let's see below.
 
 ![](img/output1.png)
 
-A linha `DEBUG: Scraped from <200 http://www.paulinia.sp.gov.br/semanarios/>` nos indica conseguimos acessar o endereço especificado (código 200).
+The line `DEBUG: Scraped from <200 http://www.paulinia.sp.gov.br/semanarios/>` tells us whether we can access the specified address (code 200).
 
-Ao desenvolver um raspador, busque principalmente por avisos de *WARNING* e *ERROR*. São eles que trarão as informações mais importantes para você entender os problemas que ocorrem.
+When developing a scraper, look mainly for *WARNING* and *ERROR* warnings. They are the ones who will provide the most important information for you to understand the problems that occur.
 
-Depois de encerrado o raspador, temos as linhas da seção dos *monitors*, que trará um relatório de execução. É normal que apareçam erros, como este abaixo.
+After the scraper is finished, we have the lines in the *monitors* section, which will bring an execution report. It is normal for errors to appear, like the one below.
 
 ![Exemplo de erro do Scrapy](img/scrapy_erro.png)
 <!-- Imagem gerada no site carbon.now.sh -->
 
-É um aviso que nada foi raspado nos últimos dias. Tudo bem, este é apenas um teste inicial para irmos nos familiarizando com o projeto.
+It is a warning that nothing has been shaved in the last few days. Okay, this is just an initial test to familiarize ourselves with the project.
 
-## Construindo um raspador de verdade 🛠️
+## Building a real scraper 🛠️
 
-Aqui, tudo vai depender da forma como cada site é construído. Mas separamos algumas dicas gerais que podem te ajudar.
+Here, everything will depend on the way each website is built. But we have separated some general tips that can help you.
 
-Primeiro, navegue pelo site para entender a forma como os DOs estão disponibilizados. Busque encontrar um padrão consistente e pouco sucetível a mudanças ocasionais para o robô extrair as informações necessárias. Por exemplo, se as publicações estão separadas em várias abas ou várias páginas, primeiro certifique-se de que todas elas seguem o mesmo padrão. Sendo o caso, então, você pode começar fazendo o raspador para a página mais recente e depois repetir as etapas para as demais, por meio de um loop, por exemplo.
+First, browse the website to understand how the official gazettes are available. Try to find a consistent pattern that is not susceptible to occasional changes for the robot to extract the necessary information. For example, if publications are separated into several tabs or pages, first make sure that they all follow the same pattern. If this is the case, then you can start by doing the scraper for the most recent page and then repeat the steps for the others, through a loop, for example.
 
-Como vimos, a variável `response` nos retorna todo conteúdo da página inicial do nosso raspador. Ela tem vários atributos, como o `text`, que traz todo HTML da página em questão como uma *string*. Mas não temos interesse em todo HTML da página, apenas em informações específicas, então, todo trabalho da raspagem consiste justamente em separar o joio do trigo para filtrar os dados de nosso interesse. Fazemos isso por meio de seletores CSS, XPath ou expressões regulares.
+As we saw, the `response` variable returns all the content of our scraper's home page. It has several attributes, such as `text`, which brings all the HTML of the page in question as a *string*. But we are not interested in all the HTML on the page, only in specific information, so all scraping work consists precisely of separating the wheat from the chaff to filter the data of interest to us. We do this through CSS, XPath or regular expression selectors.
 
-### Identificando e testando os seletores
+### Identifying and testing selectors
 
-Uma forma fácil para testar os seletores do seu raspador é usando o Scrapy Shell. Experimente rodar por exemplo o comando `scrapy shell "http://www.paulinia.sp.gov.br/semanarios"`. Agora, você pode interagir com a página por meio da linha de comando e deve ver os comandos que temos disponíveis.
+An easy way to test your scraper selectors is using Scrapy Shell. Try running, for example, the command `scrapy shell "http://www.paulinia.sp.gov.br/semanarios"`. You can now interact with the page via the command line and you should see the commands we have available.
 
 ![Output do Scrapy Shell](img/scrapy_shell.png)
 <!-- Imagem gerada no site carbon.now.sh -->
 
-O elemento mais importante no nosso caso é o `response`. Se o acesso ao site foi feito com êxito, este comando deverá retornar o código 200.
+The most important element in our case is `response`. This command should return code 200 if access to the site was successful.
 
-Já o comando `response.css("a")` nos retornaria informações sobre todos os links das página em questão. Também é possível usar o `response.xpath` para identificar os seletores.
+The command `response.css("a")` would return information about all the links on the page in question. You can also use `response.xpath` to identify selectors.
 
-O modo mais fácil para de fato identificar os tais seletores que iremos utilizar é por meio do "Inspetor Web". Trata-se de uma função disponível em praticamente todos navegadores navegadores modernos. Basta clicar do lado direito na página e selecionar a opção "Inspecionar". Assim, podemos visualizar o código HTML, copiar e buscar por seletores XPath e CSS.
+The easiest way to actually identify the selectors that we will use is through the "Web Inspector". This is a function available in practically all modern browsers. Just click on the right side of the page and select the "Inspect" option. So, we can view the HTML code, copy and search for XPath and CSS selectors.
 
-Experimente rodar o comando `response.xpath("//div[@class='container body-content']//div[@class='row']//a[contains(@href, 'AbreSemanario')]/@href")` e ver os resultados. Este seletor XPath busca primeiro por tags `div` em qualquer lugar da página, que tenha como classe `container body-content`. Dentro destas tags, buscamos então por outras `div` com a classe `row`. E, em qualquer lugar dentro destas últimas, por fim, buscamos por tags `a` (links) cujo atributo `href` contenha a palavra `AbreSemanario` e pedimos para retornar o valor apenas do atributo `href`. 
+Try running the command `response.xpath("//div[@class='container body-content']//div[@class='row']//a[contains(@href, 'AbreSemanario')]/ @href")` and see the results. This XPath selector first searches for `div` tags anywhere on the page, which have the class `container body-content`. Within these tags, we then look for other `div` with the `row` class. And, anywhere within the latter, finally, we look for `a` tags (links) whose `href` attribute contains the word `AbreSemanario` and ask to return the value of only the `href` attribute. 
 
-Existem várias formas de escrever seletores para o mesmo objeto. Você pode ter uma ideia de como montar o seletor inspecionando a página que disponibiliza os DOs.
+There are several ways to write selectors for the same object. You can get an idea of ​​how to assemble the selector by inspecting the page that provides the DOs.
 
-Se você rodar o comando acima, irá ver uma lista de objetos como este: `<Selector xpath="//div[@class='container body-content']//div[@class='row']//a[contains(@href, 'AbreSemanario')]/@href" data='AbreSemanario.aspx?id=1064'>`.
+If you run the above command, you will see a list of objects like this: `<Selector xpath="//div[@class='container body-content']//div[@class='row']//a [contains(@href, 'AbreSemanario')]/@href" data='AbreSemanario.aspx?id=1064'>`.
 
-O que realmente nos interessa é aquilo que está dentro do parâmetro `data`, ou seja, o trecho da URL que nos permite acesso a cada publicação. Então, adicione o `getall()` ao fim do comando anterior: `response.xpath("//div[@class='container body-content']//div[@class='row']//a[contains(@href, 'AbreSemanario')]/@href").getall()`.
+What really interests us is what is inside the `data` parameter, that is, the part of the URL that allows us to access each publication. Then, add `getall()` to the end of the previous command: `response.xpath("//div[@class='container body-content']//div[@class='row']//a[ contains(@href, 'AbreSemanario')]/@href").getall()`.
 
-Se o objetivo fosse selecionar apenas o primeiro item da lista, poderíamos usar o `.get()`.
+If the goal was to select only the first item in the list, we could use `.get()`.
 
-Por vezes, pode ser necessário utilizar expressões regulares (regex) para "limpar" os seletores. A [Escola de Dados tem um tutorial sobre o assunto](https://escoladedados.org/tutoriais/expressao-regular-pode-melhorar-sua-vida/) e você vai encontrar diversos outros materiais na internet com exemplos de regex comuns, como este que aborda [expressões para identificar datas](https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s04.html) - algo que pode ser muito útil na hora de trabalhar com DOs.
+Sometimes it may be necessary to use regular expressions (regex) to "clean up" the selectors. [Escola de dados has a tutorial on the subject](https://escoladedados.org/tutoriais/expressao-regular-pode-melhorar-sua-vida/) and you will find several other materials on the internet with examples of common regex, like this one that addresses [expressions to identify dates](https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s04.html) - something that can be very useful when working with official gazettes.
 
-Após identificar os seletores, é hora de construir seu raspador no arquivo `.py` da pasta `spiders`.
+After identifying the selectors, it's time to build your scraper in the `.py` file in the `spiders` folder.
 
-### Construindo o código do raspador
+### Writing the scraper code
 
-Normalmente, para completar o seu raspador você precisará fazer algumas requisições extras. É possível identificar quais requisições são necessárias fazer através do "Analizador de Rede" em navegadores. A [palestra do Giulio Carvalho na Python Brasil 2020](https://youtu.be/nhEPZ3r5zGY) mostra como pode ser feita essa análise de requisições de um site para depois converter em um raspador para o Querido Diário.
+Normally, to complete your scraper you will need to make some extra requests. It is possible to identify which requests need to be made through the "Network Analyzer" in browsers. [Giulio Carvalho's talk at Python Brasil 2020](https://youtu.be/nhEPZ3r5zGY) shows how this analysis of requests from a website can be carried out and then converted into a scraper for Querido Diário.
 
 Se você precisar fazer alguma requisição `GET`, o objeto de requisição `scrapy.Request` deve ser o suficiente. O objeto `scrapy.FormRequest` normalmente é usado para requisições `POST`, que enviam algum dado no `formdata`.
 
@@ -337,7 +337,6 @@ class SpPauliniaSpider(BaseGazetteSpider):
             )
 ```
 Para ajudar a debugar eventuais problemas na construção do código, você pode inserir a linha `import pdb; pdb.set_trace()` em qualquer trecho do raspador para inspecionar seu código (contexto, variáveis, etc.) durante a execução.
-
 
 ### Rodando o raspador
 Para rodar o raspador, execute o seguinte comando no terminal:

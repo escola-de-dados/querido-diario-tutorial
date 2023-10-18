@@ -184,13 +184,13 @@ Para rodar o código, você pode seguir as seguintes etapas:
 
 ## Dissecando o log 📄
 
-Se tudo deu certo, deve aparecer um log enorme terminal.
+Se tudo deu certo, deve aparecer um log enorme no terminal.
 
 Ele começa com algo como `[scrapy.utils.log] INFO: Scrapy 2.4.1 started (bot: gazette)` e traz uma série de informações sobre o ambiente inicialmente. Mas a parte que mais nos interessa começa apenas após a linha `[scrapy.core.engine] INFO: Spider opened` e termina na linha `[scrapy.core.engine] INFO: Closing spider (finished)`. Vejamos abaixo.
 
 ![](img/output1.png)
 
-A linha `DEBUG: Scraped from <200 http://www.paulinia.sp.gov.br/semanarios/>` nos indica conseguimos acessar o endereço especificado (código 200).
+A linha `DEBUG: Scraped from <200 http://www.paulinia.sp.gov.br/semanarios/>` nos indica se conseguimos acessar o endereço especificado (código 200).
 
 Ao desenvolver um raspador, busque principalmente por avisos de *WARNING* e *ERROR*. São eles que trarão as informações mais importantes para você entender os problemas que ocorrem.
 
@@ -238,7 +238,7 @@ Após identificar os seletores, é hora de construir seu raspador no arquivo `.p
 
 ### Construindo o código do raspador
 
-Normalmente, para completar o seu raspador você precisará fazer algumas requisições extras. É possível identificar quais requisições são necessárias fazer através do "Analizador de Rede" em navegadores. A [palestra do Giulio Carvalho na Python Brasil 2020](https://youtu.be/nhEPZ3r5zGY) mostra como pode ser feita essa análise de requisições de um site para depois converter em um raspador para o Querido Diário.
+Normalmente, para completar o seu raspador você precisará fazer algumas requisições extras. É possível identificar quais requisições são necessárias fazer através do "Analisador de Rede" em navegadores. A [palestra do Giulio Carvalho na Python Brasil 2020](https://youtu.be/nhEPZ3r5zGY) mostra como pode ser feita essa análise de requisições de um site para depois converter em um raspador para o Querido Diário.
 
 Se você precisar fazer alguma requisição `GET`, o objeto de requisição `scrapy.Request` deve ser o suficiente. O objeto `scrapy.FormRequest` normalmente é usado para requisições `POST`, que enviam algum dado no `formdata`.
 
@@ -337,7 +337,6 @@ class SpPauliniaSpider(BaseGazetteSpider):
             )
 ```
 Para ajudar a debugar eventuais problemas na construção do código, você pode inserir a linha `import pdb; pdb.set_trace()` em qualquer trecho do raspador para inspecionar seu código (contexto, variáveis, etc.) durante a execução.
-
 
 ### Rodando o raspador
 Para rodar o raspador, execute o seguinte comando no terminal:

@@ -14,17 +14,17 @@ If you prefer a video presentation about the project, feel free to check out the
   3. [Building a scraper](#building-a-scraper-)
   4. [Setting up a development environment](#setting-up-a-development-environment-)
   5. [Getting to know the scrapers](#getting-to-know-the-scrapers-)
-      1. [Specific cases](#casos-particulares)
-  6. [Anatomy of a scraper](#anatomia-de-um-raspador-)
-      1. [Initial parameters](#parametros-iniciais)
-      2. [Output parameters](#parametros-de-saida)
-  7. [Hello world: make your first request](#hello-world-faca-sua-primeira-requisicao-)
-  8. [Dissecting the log](#dissecando-o-log-)
-  9. [Building a real scraper](#construindo-um-raspador-de-verdade-)
-      1. [Identifying and testing selectors](#identificando-e-testando-os-seletores)
-      2. [Writing the scraper code](#construindo-o-codigo-do-raspador)
-      3. [Tips to test a scraper](#dcas-para-testar-o-raspador)
-  10. [Sending your contribution](#enviando-sua-contribuicao-)
+      1. [Specific cases](#specific-cases-)
+  6. [Anatomy of a scraper](#anatomy-of-a-scraper-)
+      1. [Initial parameters](#initial-parameters-)
+      2. [Output parameters](#output-parameters-)
+  7. [Hello world: make your first request](#hello-world-make-your-first-request-)
+  8. [Dissecting the log](#dissecting-the-log-)
+  9. [Building a real scraper](#building-a-real-scraper-)
+      1. [Identifying and testing selectors](#identifying-and-testing-selectors-)
+      2. [Writing the scraper code](#writing-the-scraper-code-)
+      3. [Tips to test a scraper](#tips-to-test-a-scraper-)
+  10. [Sending your contribution](#sending-your-contribution-)
 
 ## Collaborate in this tutorial 💪
 
@@ -240,72 +240,72 @@ After identifying the selectors, it's time to build your scraper in the `.py` fi
 
 Normally, to complete your scraper you will need to make some extra requests. It is possible to identify which requests need to be made through the "Network Analyzer" in browsers. [Giulio Carvalho's talk at Python Brasil 2020](https://youtu.be/nhEPZ3r5zGY) shows how this analysis of requests from a website can be carried out and then converted into a scraper for Querido Diário.
 
-Se você precisar fazer alguma requisição `GET`, o objeto de requisição `scrapy.Request` deve ser o suficiente. O objeto `scrapy.FormRequest` normalmente é usado para requisições `POST`, que enviam algum dado no `formdata`.
+If you need to make a `GET` request, the `scrapy.Request` request object should be enough. The `scrapy.FormRequest` object is normally used for `POST` requests, which send some data in `formdata`.
 
-Sempre que uma requisição for feita a partir de uma página, ela é feita utilizando a expressão `yield` e sua resposta será enviada para algum método da classe do raspador. Ou seja, além de um item (Gazette), como já vimos, o `yield` pode retornar uma requisição para outra página. As requisições têm alguns parâmetros essenciais (outros parâmetros podem ser vistos na documentação do Scrapy):
+Whenever a request is made from a page, it is made using the `yield` expression and its response will be sent to some method in the scraper class. In other words, in addition to an item (Gazette), as we have already seen, `yield` can return a request for another page. Requests have some essential parameters (other parameters can be seen in the Scrapy documentation):
 
-* `url`: A URL da página que será acessada;
-* `callback`: O método da classe do raspador para o qual a resposta será enviada (por padrão, o método `parse` é utilizado);
-* `formdata` (em `FormRequest`): Um dicionário contendo campos e seus valores que serão enviados.
+* `url`: The URL of the page that will be accessed;
+* `callback`: The scraper class method to which the response will be sent (by default, the `parse` method is used);
+* `formdata` (in `FormRequest`): A dictionary containing fields and their values ​​that will be sent.
 
-No exemplo completo para a cidade de Paulínia (SP), na página inicial temos links para todos os anos onde há diários disponíveis e em cada ano todos os diários são listados na mesma página. Então, uma requisição é feita para acessar a página de cada ano (a página inicial já é o ano atual) usando `scrapy.FormRequest` (nesse caso, um método `.from_response` que já aproveita muitas coisas da `response` atual, inclusive a própria URL). A resposta dessa requisição deve ir para o método `parse_year` que irá extrair todos os metadados possíveis de ser encontrados na página. Com isso, a extração dos diários de Paulínia está completa 😄.
+In the complete example for the city of Paulínia (SP), on the home page we have links to all the years where gazettes are available and for each year all gazettes are listed on the same page. Then, a request is made to access each year's page (the home page is already the current year) using `scrapy.FormRequest` (in this case, a `.from_response` method that already takes advantage of many things from the current `response`, including the URL itself). The response to this request must go to the `parse_year` method, which will extract all metadata found on the page. With this, the extraction of Paulínia's gazettes is complete 😄.
 
-Veja como fica o raspador no exemplo a seguir (com comentários para explicar algumas partes do código):
+Check it out what the scraper looks like in the following example (there are some comments to explain parts of the code):
 
 ```python
-# Importação dos pacotes necessários
+# Importing the necessary packages
 import datetime
 import scrapy
 from gazette.items import Gazette
 from gazette.spiders.base import BaseGazetteSpider
 
-# Definição da classe do raspador
+# Scraper class definition
 class SpPauliniaSpider(BaseGazetteSpider):
 
-    # Parâmetros iniciais
+    # Initial parameters
     name = "sp_paulinia"
     TERRITORY_ID = "2905206"
     start_date = datetime.date(2010, 1, 4)
     allowed_domains = ["www.paulinia.sp.gov.br"]
     start_urls = ["http://www.paulinia.sp.gov.br/semanarios"]
 
-    # O parse abaixo irá partir da start_url acima
+    # The parse below will start from the start_url above
     def parse(self, response):
-        # Nosso seletor cria uma lista com os código HTML onde os anos estão localizados
+        # Our selector creates a list with the HTML code where the years are located
         years = response.css("div.col-md-1")
-        # E fazer um loop para extrair de fato o ano
+        # Making a loop to actually extract the year
         for year in years:
-            # Para cada item da lista (year) vamos pegar (get) um seletor XPath.
-            # Também dizemos que queremos o resultado como um número inteiro (int)
+            # For each item in the list (year) we will get an XPath selector.
+            # We also say that we want the result as an integer (int)
             year_to_scrape = int(year.xpath("./a/font/text()").get())
 
-            # Para não fazer requisições desnecessárias, se o ano já for o da página
-            # inicial (página inicial é o ano atual) ou então for anterior ao ano da
-            # data inicial da busca, não iremos fazer a requisição
+            # To avoid making unnecessary requests, if the year is already the year of the home
+            # page (start page is the current year) or is prior to the year of
+            # start date of the search, we will not make the request
             if (
                 year_to_scrape < self.start_date.year
                 or year_to_scrape == datetime.date.today().year
             ):
                 continue
 
-            # Com Scrapy é possível utilizar regex direto no elemento com os métodos
-            # `.re` e `.re_first` (na maioria das vezes é suficiente e não precisamos
-            # usar métodos da biblioteca `re`)
+            # With Scrapy it is possible to use regex directly on the element with the methods
+            # `.re` and `.re_first` (most of the time is enough and we don't need
+            # to use methods from the `re` library)
             event_target = year.xpath("./a/@href").re_first(r"(ctl00.*?)',")
 
-            # O método `.from_response` nesse caso é bem útil pois pega vários
-            # elementos do tipo <input> que já estão dentro do elemento <form>
-            # localizado na página e preenche eles automaticamente no formdata, assim
-            # é possível economizar muitas linhas de código
+            # The `.from_response` method, in this case, is very useful as it takes several
+            # elements of type <input> that are already inside the <form> element
+            # located on the page and automatically fills them in formdata, thus
+            # it is possible to save many lines of code
             yield scrapy.FormRequest.from_response(
                 response,
                 formdata={"__EVENTTARGET": event_target},
                 callback=self.parse_year,
             )
 
-        # O `yield from` permite fazermos `yield` em cada resultado do método gerador
-        # `self.parse_year`, assim, aqui estamos dando `yield` em todos os itens
-        # `Gazette` raspados da página inicial
+        # `yield from` allows us to `yield` on each result of the generating method
+        # `self.parse_year`, so here we are giving `yield` to all  `Gazette `items
+        #  scraped from home page
         yield from self.parse_year(response)
 
     def parse_year(self, response):
@@ -324,10 +324,10 @@ class SpPauliniaSpider(BaseGazetteSpider):
             edition_number = title.re_first(r"- (\d+) -")
             is_extra_edition = "extra" in title.get().lower()
 
-            # Esse site "esconde" o link direto do PDF por trás de uma série de
-            # redirecionamentos, porém, como nas configurações do projeto é permitido
-            # que arquivos baixados sofram redirecionamento, é possível colocar o link
-            # "falso" já no item `Gazette` e o projeto vai conseguir baixar o documento
+            # This website "hides" the direct PDF link behind a series of
+            # redirects, however, as in the project settings it is allowed
+            # that downloaded files are redirected, it is possible to place the "false" link
+            # already in the `Gazette` item and the project will be able to download the document
             yield Gazette(
                 date=gazette_date,
                 edition_number=edition_number,
@@ -336,42 +336,43 @@ class SpPauliniaSpider(BaseGazetteSpider):
                 power="executive",
             )
 ```
-Para ajudar a debugar eventuais problemas na construção do código, você pode inserir a linha `import pdb; pdb.set_trace()` em qualquer trecho do raspador para inspecionar seu código (contexto, variáveis, etc.) durante a execução.
+To help debug any problems when building the code, you can insert the line `import pdb; pdb.set_trace()` in any part of the scraper to inspect its code (context, variables, etc.) during execution.
 
-### Rodando o raspador
-Para rodar o raspador, execute o seguinte comando no terminal:
+### Running the scraper
+
+To run the scraper, run the following command in the terminal:
 
 ```
-scrapy crawl nome_do_raspador
+scrapy crawl name_of_scraper
 ```
 
-No caso acima, seria:
+In the case above, it would be:
 
 ```
 scrapy crawl sp_paulinia
 ```
-O comando acima irá baixar os arquivos dos Diários Oficiais irá a pasta `data`. Durante o processo de desenvolvimento, muitas vezes é útil usar também os seguintes parâmetros adicionais na hora de rodar o raspador:
+The above command will download the Official Gazette files to the `data` folder. During the development process, it is often useful to also use the following additional parameters when running the scraper:
 
-- `-s FILES_STORE=""`: Testar o raspador sem baixar nenhum arquivo adicionando. Isso é útil para testar rápido se todas as requisições estão funcionando.
+- `-s FILES_STORE=""`: Tests the scraper without downloading any files locally. This is useful for quickly testing whether all requests are working.
 
-- `-o output.csv`: Adiciona os itens extraídos para um arquivo CSV. Também é possível usar outra extensão como `.json` ou `.jsonlines`. Isso facilita a análise do que está sendo raspado.
+- `-o output.csv`: Adds the extracted items to a CSV file. You can also use another extension like `.json` or `.jsonlines`. This makes it easier to analyze what is being scraped.
 
-- `-s LOG_FILE=logs.txt`: Salva os resultados do log em um arquivo texto. Se o log estiver muito grande, é útil para que erros não passem despercebidos.
+- `-s LOG_FILE=logs.txt`: Saves log results to a text file. If the log is very large, it is useful so that errors do not go unnoticed.
 
-- `-a start_date=2020-12-01`: Também é muito importante testar se o filtro de data no raspador está funcionando. Utilizando esse argumento, apenas as requisições necessárias para extrair documentos a partir da data desejada devem ser feitas. Este exemplo faz o teste para publicações a partir de 1 de dezembro de 2020. O atributo `start_date` do raspador é utilizado internamente, então, e o argumento não for passado, o padrão (primeira data de publicação) é utilizado no lugar.
+- `-a start_date=2020-12-01`: It is also very important to test whether the date filter in the scraper is working. Using this argument, requests will only be made considering the defined period of time. This example tests for publications on or after December 1, 2020. The scraper's `start_date` attribute is used internally, so if the argument is not passed, the default (first publication date) is used instead.
 
-Para rodar o comando usando todas a opções anteriores em `sp_paulinia`, usaríamos o seguinte comando:
+To run the command using all the previous options in `sp_paulinia`, we would use the following code:
 
 ```
 scrapy crawl sp_paulinia -a start_date=2020-12-01 -s FILES_STORE="" -s LOG_FILE=logs.txt -o output.json
 ```
 
-## Enviando sua contribuição 🤝
+## Sending your contribution 🤝
 
-Ao fazer o commit do código, mencione a issue do raspador da sua cidade. Você pode incluir uma mensagem como `Close #20`, por exemplo, onde #20 é o número identificador da issue criada. Também adicione uma descrição comentando suas opções na hora de desenvolver o raspador ou eventuais incertezas.
+When committing the code to the [querido-diario repository](https://github.com/okfn-brasil/querido-diario), mention the scraper issue in your city. You can include a message like `Close #20`, for example, where #20 is the identifying number of the created issue. Also add a description commenting on your options when developing the scraper or any uncertainties.
 
-Normalmente adicionar apenas um raspador necessita apenas de um único commit. Mas, se for necessário mais de um commit, tente manter um certo nível de separação entre o que cada um está fazendo e também se certifique que suas mensagens estão bem claras e correspondendo ao que os commits realmente fazem.
+Typically adding just one scraper only requires a single commit. But if more than one commit is needed, try to maintain a certain level of separation between what each commit is doing and also make sure your messages are clear and correspond to what the commits actually do.
 
-Uma boa prática é sempre atualizar a ramificação (_branch_) que você está desenvolvendo com o que está na `main` atualizada do projeto. Assim, se o projeto teve atualizações, você pode resolver algum conflito antes mesmo de fazer o Pull Request.
+A good practice is to always update the branch you are developing with what is in the project's updated `main`. So, if the project has had updates, you can resolve any conflicts before even making the Pull Request.
 
-Qualquer dúvida, abra o seu Pull Request em modo de rascunho (_draft_) e relate suas dúvidas para que pessoas do projeto tentem te ajudar 😃. O [canal de discussões no Discord](https://discord.com/invite/nDc9p4drm4) também é aberto para tirar dúvidas e trocar ideias.
+If you have any questions, open your Pull Request in draft mode (_draft_) and report your questions so that people from the project can try to help you 😃. The [Discord discussion channel](https://discord.com/invite/nDc9p4drm4) is also open to answering questions and exchanging ideas.

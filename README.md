@@ -293,7 +293,7 @@ class SpPauliniaSpider(BaseGazetteSpider):
             # usar métodos da biblioteca `re`)
             event_target = year.xpath("./a/@href").re_first(r"(ctl00.*?)',")
 
-            # O método `.from_response` nesse caso é bem útil pois pega vários
+            # O método `.from_response`, nesse caso, é bem útil pois pega vários
             # elementos do tipo <input> que já estão dentro do elemento <form>
             # localizado na página e preenche eles automaticamente no formdata, assim
             # é possível economizar muitas linhas de código
@@ -352,13 +352,13 @@ scrapy crawl sp_paulinia
 ```
 O comando acima irá baixar os arquivos dos Diários Oficiais irá a pasta `data`. Durante o processo de desenvolvimento, muitas vezes é útil usar também os seguintes parâmetros adicionais na hora de rodar o raspador:
 
-- `-s FILES_STORE=""`: Testar o raspador sem baixar nenhum arquivo adicionando. Isso é útil para testar rápido se todas as requisições estão funcionando.
+- `-s FILES_STORE=""`: Testa o raspador sem baixar nenhum arquivo localmente. Isso é útil para testar rápido se todas as requisições estão funcionando.
 
 - `-o output.csv`: Adiciona os itens extraídos para um arquivo CSV. Também é possível usar outra extensão como `.json` ou `.jsonlines`. Isso facilita a análise do que está sendo raspado.
 
 - `-s LOG_FILE=logs.txt`: Salva os resultados do log em um arquivo texto. Se o log estiver muito grande, é útil para que erros não passem despercebidos.
 
-- `-a start_date=2020-12-01`: Também é muito importante testar se o filtro de data no raspador está funcionando. Utilizando esse argumento, apenas as requisições necessárias para extrair documentos a partir da data desejada devem ser feitas. Este exemplo faz o teste para publicações a partir de 1 de dezembro de 2020. O atributo `start_date` do raspador é utilizado internamente, então, e o argumento não for passado, o padrão (primeira data de publicação) é utilizado no lugar.
+- `-a start_date=2020-12-01`: Também é muito importante testar se o filtro de data no raspador está funcionando. Utilizando esse argumento, apenas serão feitas requisições considerando o período de tempo definido. Este exemplo faz o teste para publicações a partir de 1 de dezembro de 2020. O atributo `start_date` do raspador é utilizado internamente, então, se o argumento não for passado, o padrão (primeira data de publicação) é utilizado no lugar.
 
 Para rodar o comando usando todas a opções anteriores em `sp_paulinia`, usaríamos o seguinte comando:
 
@@ -368,7 +368,7 @@ scrapy crawl sp_paulinia -a start_date=2020-12-01 -s FILES_STORE="" -s LOG_FILE=
 
 ## Enviando sua contribuição 🤝
 
-Ao fazer o commit do código, mencione a issue do raspador da sua cidade. Você pode incluir uma mensagem como `Close #20`, por exemplo, onde #20 é o número identificador da issue criada. Também adicione uma descrição comentando suas opções na hora de desenvolver o raspador ou eventuais incertezas.
+Ao fazer o commit do código no repositório [querido-diario](https://github.com/okfn-brasil/querido-diario), mencione a issue do raspador da sua cidade. Você pode incluir uma mensagem como `Close #20`, por exemplo, onde #20 é o número identificador da issue criada. Também adicione uma descrição comentando suas opções na hora de desenvolver o raspador ou eventuais incertezas.
 
 Normalmente adicionar apenas um raspador necessita apenas de um único commit. Mas, se for necessário mais de um commit, tente manter um certo nível de separação entre o que cada um está fazendo e também se certifique que suas mensagens estão bem claras e correspondendo ao que os commits realmente fazem.
 
